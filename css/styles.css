@@ -1822,43 +1822,120 @@ html[lang="fr"] .philosopher-quote {
   bottom: 0;
   left: 0;
   right: 0;
-  z-index: 999;
-  background: var(--bg-glass);
-  backdrop-filter: blur(18px);
-  -webkit-backdrop-filter: blur(18px);
-  border-top: 1px solid var(--border-subtle);
-  height: 65px;
-  padding: 0 0.5rem;
+  z-index: 1200;
+  background: rgba(11, 15, 25, 0.88);
+  backdrop-filter: blur(24px) saturate(180%);
+  -webkit-backdrop-filter: blur(24px) saturate(180%);
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+  box-shadow: 0 -8px 32px rgba(0, 0, 0, 0.4);
+  height: calc(64px + env(safe-area-inset-bottom, 0px));
+  padding: 0 0.4rem env(safe-area-inset-bottom, 0px);
+}
+
+[data-theme="light"] .mobile-bottom-bar {
+  background: rgba(255, 255, 255, 0.92);
+  border-top-color: rgba(0, 0, 0, 0.08);
+  box-shadow: 0 -8px 25px rgba(0, 0, 0, 0.08);
 }
 
 .mobile-bottom-nav {
   display: flex;
   align-items: center;
   justify-content: space-around;
-  height: 100%;
+  height: 64px;
 }
 
 .mobile-nav-btn {
+  position: relative;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
   gap: 3px;
   color: var(--text-muted);
-  font-size: 0.72rem;
-  font-weight: 600;
-  width: 33.33%;
+  font-size: 0.68rem;
+  font-weight: 700;
+  flex: 1;
   height: 100%;
-  transition: color var(--transition-fast);
+  text-decoration: none;
+  -webkit-tap-highlight-color: transparent;
+  user-select: none;
+  touch-action: manipulation;
+  transition: all var(--transition-fast);
+}
+
+.mobile-nav-btn .nav-icon-wrap {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 38px;
+  height: 28px;
+  border-radius: var(--radius-full);
+  transition: all 0.22s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 .mobile-nav-btn svg {
-  width: 22px;
-  height: 22px;
+  width: 20px;
+  height: 20px;
+  transition: transform 0.22s cubic-bezier(0.175, 0.885, 0.32, 1.275);
 }
 
-.mobile-nav-btn.active, .mobile-nav-btn:hover {
+.mobile-nav-btn:active {
+  transform: scale(0.92);
+}
+
+.mobile-nav-btn.active {
   color: var(--accent-gold);
+}
+
+.mobile-nav-btn.active .nav-icon-wrap {
+  background: rgba(245, 158, 11, 0.16);
+  box-shadow: 0 0 12px rgba(245, 158, 11, 0.25);
+}
+
+.mobile-nav-btn.active svg {
+  stroke: var(--accent-gold);
+  transform: scale(1.12);
+}
+
+/* زر عائم سريع للعودة للأعلى (Floating Scroll-Top Action) */
+.fab-scroll-top {
+  position: fixed;
+  bottom: calc(76px + env(safe-area-inset-bottom, 0px));
+  inset-inline-end: 1rem;
+  z-index: 1100;
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  background: var(--bg-card);
+  border: 1px solid var(--border-medium);
+  color: var(--accent-gold);
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.4);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(16px) scale(0.85);
+  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+  -webkit-tap-highlight-color: transparent;
+}
+
+.fab-scroll-top.visible {
+  opacity: 1;
+  visibility: visible;
+  transform: translateY(0) scale(1);
+}
+
+.fab-scroll-top:active {
+  transform: scale(0.9);
+  background: var(--bg-tertiary);
+}
+
+/* مقبض سحب المودال في الهاتف (Sheet Drag Handle) */
+.sheet-drag-handle {
+  display: none;
 }
 
 /* قائمة السحب الجانبية للهاتف */
@@ -2281,63 +2358,320 @@ html[dir="ltr"] .btn-login-submit:hover .btn-arrow {
 }
 
 @media (max-width: 768px) {
-  .btn-admin-cta-desktop {
-    display: none;
+  /* تعديل تخطيط الصفحة وشريط الأمان في الهاتف */
+  body {
+    padding-bottom: calc(76px + env(safe-area-inset-bottom, 0px));
+    -webkit-tap-highlight-color: transparent;
+    overflow-x: hidden;
   }
-  .top-official-bar {
-    font-size: 0.72rem;
+
+  /* تفاعل اللمس السريع الشبيه بالتطبيقات */
+  button, .btn-download, .filter-pill, .level-card, .lesson-card, .mobile-nav-btn {
+    touch-action: manipulation;
   }
-  .links-official {
-    display: none;
+  
+  button:active, .btn-download:active, .filter-pill:active {
+    transform: scale(0.96) !important;
   }
+
+  /* الشريط العلوي */
+  .site-header {
+    padding-top: env(safe-area-inset-top, 0px);
+  }
+
   .nav-container {
-    height: 72px;
+    height: 60px;
+    padding: 0 1rem;
   }
+
   .brand-title {
-    font-size: 1.15rem;
+    font-size: 1.05rem;
   }
+
   .brand-tag-mini {
     display: none;
   }
+
   .brand-subtitle {
-    font-size: 0.7rem;
+    display: none;
   }
+
   .brand-emblem {
-    width: 42px;
-    height: 42px;
+    width: 36px;
+    height: 36px;
   }
+
   .emblem-svg {
-    width: 30px;
-    height: 30px;
+    width: 26px;
+    height: 26px;
   }
+
   .hamburger-btn {
     display: flex;
+    width: 38px;
+    height: 38px;
   }
+
+  .btn-theme-sphere {
+    width: 38px;
+    height: 38px;
+  }
+
+  .btn-lang-luxury {
+    padding: 0.35rem 0.65rem;
+    font-size: 0.78rem;
+  }
+
+  .btn-admin-cta-desktop, .links-official {
+    display: none;
+  }
+
+  .top-official-bar {
+    font-size: 0.7rem;
+    padding: 0.3rem 0;
+  }
+
   .mobile-bottom-bar {
     display: block;
   }
-  body {
-    padding-bottom: 70px; /* مسافة لشريط الهاتف السفلي */
+
+  /* قسم البطل الرئيسي في الهاتف */
+  .hero-section {
+    padding: 2rem 0 2.5rem;
   }
-  .levels-grid, .lessons-grid, .philosophers-grid {
-    grid-template-columns: 1fr;
+
+  .hero-badge-tag {
+    font-size: 0.75rem;
+    padding: 0.35rem 0.85rem;
   }
-  .stats-banner-grid, .admin-metrics-grid {
-    grid-template-columns: 1fr;
+
+  .hero-title {
+    font-size: 1.85rem !important;
+    line-height: 1.35 !important;
   }
-  .footer-grid {
-    grid-template-columns: 1fr;
-    gap: 2rem;
+
+  .hero-subtitle {
+    font-size: 0.92rem;
+    line-height: 1.6;
+    margin-bottom: 1.5rem;
   }
+
   .hero-quote-card {
-    padding: 1.2rem 1.4rem;
+    padding: 1.1rem 1.25rem;
+    margin: 1.5rem 0;
+    border-radius: var(--radius-md);
   }
+
   .hero-quote-text {
-    font-size: 1.15rem;
+    font-size: 1.05rem;
+    line-height: 1.55;
   }
+
+  .hero-cta-group {
+    flex-direction: column;
+    width: 100%;
+    gap: 0.65rem;
+  }
+
+  .hero-cta-group .btn-download {
+    width: 100%;
+    min-height: 48px;
+    justify-content: center;
+    font-size: 0.95rem;
+  }
+
+  /* صندوق البحث بنمط تطبيقات الموبايل */
+  .hero-search-box {
+    margin-top: 1.8rem;
+  }
+
+  .search-input-wrapper {
+    flex-direction: column;
+    padding: 0.45rem;
+    border-radius: var(--radius-md);
+  }
+
+  .search-input {
+    font-size: 0.95rem;
+    padding: 0.7rem 0.6rem;
+  }
+
+  .btn-search-trigger {
+    width: 100%;
+    justify-content: center;
+    min-height: 44px;
+    margin-top: 0.3rem;
+  }
+
+  /* شبكة الإحصائيات (2 في كل صف) */
+  .stats-banner-grid {
+    grid-template-columns: repeat(2, 1fr) !important;
+    gap: 0.65rem;
+    margin-top: 2rem;
+  }
+
+  .stat-item-card {
+    padding: 1rem 0.75rem;
+  }
+
+  .stat-item-card h3 {
+    font-size: 1.55rem;
+  }
+
+  .stat-item-card p {
+    font-size: 0.72rem;
+  }
+
+  /* شريط فلاتر الدروس كشريط تمرير أفقي انسيابي (Swipeable Chips Ribbon) */
+  .filter-tabs-bar {
+    overflow-x: auto;
+    flex-wrap: nowrap !important;
+    justify-content: flex-start !important;
+    scroll-snap-type: x mandatory;
+    padding: 0.4rem 1rem 0.8rem;
+    margin: 0 -1rem 1.8rem -1rem;
+    scrollbar-width: none;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .filter-tabs-bar::-webkit-scrollbar {
+    display: none;
+  }
+
+  .filter-pill {
+    scroll-snap-align: start;
+    flex-shrink: 0;
+    white-space: nowrap;
+    font-size: 0.8rem;
+    padding: 0.45rem 1rem;
+    border-radius: var(--radius-full);
+  }
+
+  /* شبكات البطاقات (بطاقة واحدة ملء الشاشة في الهاتف) */
+  .levels-grid, .lessons-grid, .philosophers-grid, .pedagogy-grid, .exams-grid {
+    grid-template-columns: 1fr !important;
+    gap: 1.1rem;
+  }
+
+  .level-card, .lesson-card, .pedagogy-card, .exam-card, .philosopher-card {
+    border-radius: var(--radius-md);
+    padding: 1.25rem;
+  }
+
+  .card-actions-group, .lesson-card-footer, .exam-card-footer {
+    flex-direction: row;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+  }
+
+  .card-actions-group .btn-download, .lesson-card-footer .btn-download, .exam-card-footer .btn-download {
+    flex: 1;
+    min-height: 44px;
+    justify-content: center;
+    font-size: 0.82rem;
+    padding: 0.5rem 0.8rem;
+  }
+
+  /* مظهر الأدراج السفلية للمودال في الهاتف (Native Bottom Sheet) */
+  .modal-overlay {
+    align-items: flex-end !important;
+    padding: 0 !important;
+    background: rgba(0, 0, 0, 0.75) !important;
+  }
+
+  .modal-box {
+    width: 100% !important;
+    max-width: 100% !important;
+    max-height: 88vh !important;
+    border-radius: 24px 24px 0 0 !important;
+    border-bottom: none !important;
+    margin: 0 !important;
+    animation: slide-up-sheet 0.3s cubic-bezier(0.16, 1, 0.3, 1) !important;
+    box-shadow: 0 -10px 40px rgba(0, 0, 0, 0.6) !important;
+    padding-bottom: calc(1rem + env(safe-area-inset-bottom, 0px)) !important;
+  }
+
+  @keyframes slide-up-sheet {
+    from { transform: translateY(100%); }
+    to { transform: translateY(0); }
+  }
+
+  .sheet-drag-handle {
+    display: block !important;
+    width: 44px;
+    height: 4.5px;
+    background: var(--text-muted);
+    opacity: 0.4;
+    border-radius: 99px;
+    margin: 10px auto 4px auto;
+  }
+
+  .modal-header {
+    padding: 1rem 1.25rem !important;
+  }
+
+  .modal-body {
+    padding: 1.25rem !important;
+    max-height: calc(88vh - 140px);
+    overflow-y: auto;
+  }
+
+  .modal-footer {
+    padding: 0.9rem 1.25rem !important;
+  }
+
+  /* لوحة الإدارة في الهاتف */
   .admin-header-bar {
     flex-direction: column;
-    align-items: flex-start;
+    align-items: stretch;
+    gap: 1rem;
+  }
+
+  .admin-controls-group {
+    flex-direction: column;
+    width: 100%;
+    gap: 0.6rem;
+  }
+
+  .admin-controls-group .btn-download {
+    width: 100%;
+    justify-content: center;
+  }
+
+  .admin-metrics-grid {
+    grid-template-columns: repeat(2, 1fr) !important;
+    gap: 0.75rem;
+  }
+
+  .admin-tabs-nav {
+    overflow-x: auto;
+    flex-wrap: nowrap;
+    padding-bottom: 0.5rem;
+    scrollbar-width: none;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .admin-tabs-nav::-webkit-scrollbar {
+    display: none;
+  }
+
+  .admin-tab-btn {
+    flex-shrink: 0;
+    white-space: nowrap;
+    font-size: 0.8rem;
+    padding: 0.5rem 0.9rem;
+  }
+
+  /* الفوتر في الهاتف */
+  .footer-grid {
+    grid-template-columns: 1fr !important;
+    gap: 2rem;
+  }
+
+  .footer-bottom {
+    flex-direction: column;
+    text-align: center;
+    gap: 1rem;
   }
 }
 

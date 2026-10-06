@@ -13,6 +13,7 @@ class AppManager {
   init() {
     this.setupTheme();
     this.setupScrollHeader();
+    this.setupMobileAppFeatures();
     this.bindEvents();
     this.renderAll();
 
@@ -33,6 +34,54 @@ class AppManager {
         header.classList.remove("scrolled");
       }
     }, { passive: true });
+  }
+
+  setupMobileAppFeatures() {
+    // 1. زر العودة السريعة للأعلى في الهاتف
+    const fabScroll = document.getElementById("btnScrollTop");
+    if (fabScroll) {
+      window.addEventListener("scroll", () => {
+        if (window.scrollY > 350) {
+          fabScroll.classList.add("visible");
+        } else {
+          fabScroll.classList.remove("visible");
+        }
+      }, { passive: true });
+
+      fabScroll.addEventListener("click", () => {
+        window.scrollTo({ top: 0, behavior: "smooth" });
+      });
+    }
+
+    // 2. تحديث التبويب النشط في شريط الهاتف السفلي (Scroll Spy)
+    const navButtons = document.querySelectorAll(".mobile-nav-btn[data-nav-target]");
+    if (navButtons.length > 0) {
+      const sectionIds = ["home", "levels", "lessons", "exams", "philosophers"];
+      const sections = sectionIds.map(id => document.getElementById(id)).filter(Boolean);
+
+      if ("IntersectionObserver" in window) {
+        const observer = new IntersectionObserver((entries) => {
+          entries.forEach(entry => {
+            if (entry.isIntersecting) {
+              const currentId = entry.target.id;
+              navButtons.forEach(btn => {
+                if (btn.dataset.navTarget === currentId) {
+                  btn.classList.add("active");
+                } else {
+                  btn.classList.remove("active");
+                }
+              });
+            }
+          });
+        }, {
+          root: null,
+          rootMargin: "-25% 0px -55% 0px",
+          threshold: 0
+        });
+
+        sections.forEach(s => observer.observe(s));
+      }
+    }
   }
 
   setupTheme() {
