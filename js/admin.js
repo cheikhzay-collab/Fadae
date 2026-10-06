@@ -477,6 +477,13 @@ class AdminManager {
     `;
   }
 
+  switchTab(tabName) {
+    this.currentAdminTab = tabName;
+    const tabs = document.querySelectorAll(".admin-tab-btn");
+    tabs.forEach(t => t.classList.toggle("active", t.dataset.adminTab === tabName));
+    this.renderAdminTab();
+  }
+
   openResourceModal(lesson = null) {
     this.editingId = lesson ? lesson.id : null;
     const modal = document.getElementById("adminResourceModal");
@@ -484,17 +491,19 @@ class AdminManager {
 
     if (lesson) {
       titleModal.innerText = "تعديل المورد الفلسفي";
-      document.getElementById("formTitleAr").value = lesson.title_ar;
-      document.getElementById("formTitleFr").value = lesson.title_fr;
-      document.getElementById("formLevel").value = lesson.levelId;
-      document.getElementById("formModule").value = lesson.moduleId;
-      document.getElementById("formAuthor").value = lesson.author;
-      document.getElementById("formSummary").value = lesson.summary_ar;
-      document.getElementById("formContent").value = lesson.content_ar;
-      document.getElementById("formTags").value = lesson.tags_ar.join(", ");
+      document.getElementById("formTitleAr").value = lesson.title_ar || "";
+      document.getElementById("formTitleFr").value = lesson.title_fr || "";
+      document.getElementById("formLevel").value = lesson.levelId || "2bac";
+      document.getElementById("formModule").value = lesson.moduleId || "mod-human-condition";
+      document.getElementById("formAuthor").value = lesson.author || "";
+      document.getElementById("formSummary").value = lesson.summary_ar || "";
+      document.getElementById("formContent").value = lesson.content_ar || "";
+      const rawTags = lesson.tags_ar;
+      document.getElementById("formTags").value = Array.isArray(rawTags) ? rawTags.join(", ") : (rawTags || "");
     } else {
-      titleModal.innerText = window.i18n.t("modal_add_title");
-      document.getElementById("resourceForm").reset();
+      titleModal.innerText = window.i18n ? window.i18n.t("modal_add_title") : "إضافة مورد فلسفي جديد";
+      const form = document.getElementById("resourceForm");
+      if (form) form.reset();
     }
 
     if (modal) modal.classList.add("active");
@@ -529,8 +538,8 @@ class AdminManager {
           summary_ar: summaryAr,
           summary_fr: summaryAr,
           content_ar: contentAr,
-          tags_ar: tags,
-          tags_fr: tags
+          tags_ar: tags.length ? tags : PHILO_DATA.lessons[idx].tags_ar,
+          tags_fr: tags.length ? tags : PHILO_DATA.lessons[idx].tags_fr
         };
       }
     } else {
@@ -575,9 +584,11 @@ class AdminManager {
     } catch (e) {}
 
     this.closeResourceModal();
-    this.renderAdminView();
-    window.app.renderLessons();
-    window.app.showToast(window.i18n.t("form_save_success") || "تم حفظ المورد بنجاح في المنصة!");
+    // التحويل فوراً لتبويب الدروس ليرى المشرف درسه المضاف في الجدول
+    this.switchTab("lessons");
+    this.renderMetrics();
+    if (window.app) window.app.renderLessons();
+    if (window.app) window.app.showToast(window.i18n ? window.i18n.t("form_save_success") : "تم حفظ المورد بنجاح في المنصة!");
   }
 
   persistLessons() {
@@ -602,27 +613,30 @@ class AdminManager {
       lesson.status = lesson.status === "published" ? "draft" : "published";
       this.persistLessons();
       this.renderAdminTab();
-      window.app.renderLessons();
-      window.app.showToast("تم تحديث حالة النشر بنجاح وحفظ التغيير!");
+      if (window.app) window.app.renderLessons();
+      if (window.app) window.app.showToast("تم تحديث حالة النشر بنجاح وحفظ التغيير!");
     }
   }
 
   deleteLesson(id) {
-    if (confirm(window.i18n.t("delete_confirm") || "هل أنت متأكد من حذف هذا المورد نهائياً؟")) {
-      PHILO_DATA.lessons = PHILO_DATA.lessons.filter(l => l.id !== id);
-      this.persistLessons();
+    if (!id) return;
+    const confirmed = confirm(window.i18n ? window.i18n.t("delete_confirm") : "هل أنت متأكد من حذف هذا المورد نهائياً؟");
+    if (!confirmed) return;
 
-      // مزامنة الحذف مع الخادم وقاعدة البيانات (Hostinger / Node)
-      try {
-        fetch(`api/lessons.php?id=${encodeURIComponent(id)}`, { method: "DELETE" }).catch(() => {
-          fetch(`/api/lessons?id=${encodeURIComponent(id)}`, { method: "DELETE" }).catch(() => {});
-        });
-      } catch (e) {}
+    PHILO_DATA.lessons = PHILO_DATA.lessons.filter(l => l.id !== id);
+    this.persistLessons();
 
-      this.renderAdminView();
-      window.app.renderLessons();
-      window.app.showToast("تم حذف المورد بنجاح وتحديث قاعدة البيانات.");
-    }
+    // مزامنة الحذف مع الخادم وقاعدة البيانات (Hostinger / Node)
+    try {
+      fetch(`api/lessons.php?id=${encodeURIComponent(id)}`, { method: "DELETE" }).catch(() => {
+        fetch(`/api/lessons?id=${encodeURIComponent(id)}`, { method: "DELETE" }).catch(() => {});
+      });
+    } catch (e) {}
+
+    this.renderAdminTab();
+    this.renderMetrics();
+    if (window.app) window.app.renderLessons();
+    if (window.app) window.app.showToast("تم حذف المورد بنجاح وتحديث قاعدة البيانات.");
   }
 
   filterTable(query) {
