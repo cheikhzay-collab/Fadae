@@ -1,0 +1,645 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl" data-theme="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>فضاء الحكمة والمعرفة | Espace Sagesse et Savoir</title>
+  <meta name="description" content="المنصة التربوية الرقمية الأولى لمادة الفلسفة بالثانوي التأهيلي بالمغرب. جذاذات بيداغوجية، دروس، امتحانات وطنية مع عناصر الإجابة، ولوحة إدارة متكاملة.">
+  <meta name="keywords" content="فلسفة, الثانوي التأهيلي, المغرب, البكالوريا, جذاذات, الوضع البشري, المعرفة, السياسة, الأخلاق, ابن رشد, كانط, ديكارت">
+  
+  <!-- Favicon SVG -->
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><circle cx='50' cy='50' r='48' fill='%237c3aed'/><polygon points='50,15 62,38 88,40 68,58 74,84 50,70 26,84 32,58 12,40 38,38' fill='%23f59e0b'/><circle cx='50' cy='50' r='14' fill='%230b0f19'/></svg>">
+
+  <!-- ورقة الأنماط الشاملة -->
+  <link rel="stylesheet" href="css/styles.css">
+</head>
+<body class="rtl">
+
+  <!-- ========================================================================
+       شريط التنقل العلوي (Navbar)
+       ======================================================================== -->
+  <!-- ========================================================================
+       الشريط التوجيهي الرسمي العلوي (Top Official Bar)
+       ======================================================================== -->
+  <div class="top-official-bar" id="topOfficialBar">
+    <div class="container top-bar-container">
+      <div class="top-bar-item kingdom-identity">
+        <span class="flag-icon">🇲🇦</span>
+        <span class="top-bar-text" data-i18n="top_bar_kingdom">المملكة المغربية — وزارة التربية الوطنية والتعليم الأولي والرياضة</span>
+      </div>
+      <div class="top-bar-item center-announcement">
+        <span class="pulse-status-dot"></span>
+        <span class="top-bar-highlight" data-i18n="top_bar_announcement">المنصة البيداغوجية الرسمية لمادة الفلسفة بالثانوي التأهيلي • الموسم 2025 - 2026</span>
+      </div>
+      <div class="top-bar-item links-official">
+        <span class="top-badge-official" data-i18n="top_badge_official">المقرر المحيّن</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- ========================================================================
+       شريط التنقل العلوي الفاخر (Master Luxury Header)
+       ======================================================================== -->
+  <header class="site-header" id="siteHeader">
+    <div class="container nav-container">
+      <!-- الشعار والهوية البصرية -->
+      <a href="#home" class="brand" id="brandLink" aria-label="فضاء الحكمة والمعرفة">
+        <div class="brand-emblem" aria-hidden="true">
+          <svg class="emblem-svg" viewBox="0 0 44 44" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <defs>
+              <linearGradient id="goldGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                <stop offset="0%" stop-color="#FDE68A"/>
+                <stop offset="50%" stop-color="#F59E0B"/>
+                <stop offset="100%" stop-color="#B45309"/>
+              </linearGradient>
+              <linearGradient id="purpleGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                <stop offset="0%" stop-color="#C084FC"/>
+                <stop offset="100%" stop-color="#7C3AED"/>
+              </linearGradient>
+            </defs>
+            <!-- نجمة مغربية ثمانية الأبعاد مدمجة بمدار الحكمة -->
+            <rect x="7" y="7" width="30" height="30" rx="8" fill="url(#purpleGrad)" fill-opacity="0.35" stroke="url(#goldGrad)" stroke-width="1.5" transform="rotate(45 22 22)"/>
+            <rect x="7" y="7" width="30" height="30" rx="8" fill="url(#purpleGrad)" fill-opacity="0.5" stroke="url(#goldGrad)" stroke-width="1.5"/>
+            <!-- كتاب الفلسفة المفتوح وشعلة اللوغوس -->
+            <path d="M14 28.5C17 27 20 27 22 28.5V17C20 15.5 17 15.5 14 17V28.5Z" fill="url(#goldGrad)"/>
+            <path d="M30 28.5C27 27 24 27 22 28.5V17C24 15.5 27 15.5 30 17V28.5Z" fill="url(#goldGrad)"/>
+            <!-- شعلة الحكمة المنيرة -->
+            <path d="M22 10.5C23.2 12.2 24.5 13.5 22 15.5C20.5 13.5 21.2 12.2 22 10.5Z" fill="#FDE68A"/>
+          </svg>
+        </div>
+        <div class="brand-text">
+          <div class="brand-title-wrap">
+            <span class="brand-title" data-i18n="site_title">فضاء الحكمة والمعرفة</span>
+            <span class="brand-tag-mini">ثانوي تأهيلي</span>
+          </div>
+          <span class="brand-subtitle" data-i18n="portal_tagline">ديداكتيك مادة الفلسفة • التميز الإشهادي بالمغرب</span>
+        </div>
+      </a>
+
+      <!-- روابط القائمة الرئيسية (كبسولة عائمة فاخرة) -->
+      <nav class="nav-island-wrapper" id="desktopNav">
+        <ul class="nav-links">
+          <li><a href="#home" class="nav-link active" data-i18n="nav_home"><span class="nav-icon">🏠</span><span>الرئيسية</span></a></li>
+          <li><a href="#levels" class="nav-link" data-i18n="section_levels"><span class="nav-icon">🎓</span><span>المستويات</span></a></li>
+          <li><a href="#lessons" class="nav-link" data-i18n="nav_lessons"><span class="nav-icon">📚</span><span>الدروس</span></a></li>
+          <li><a href="#pedagogy" class="nav-link" data-i18n="nav_pedagogy"><span class="nav-icon">📋</span><span>الجذاذات</span></a></li>
+          <li><a href="#exams" class="nav-link" data-i18n="nav_exams"><span class="nav-icon">📝</span><span>الامتحانات</span></a></li>
+          <li><a href="#methodology" class="nav-link" data-i18n="nav_methodology"><span class="nav-icon">📐</span><span>المنهجيات</span></a></li>
+          <li><a href="#philosophers" class="nav-link" data-i18n="nav_philosophers"><span class="nav-icon">🏛️</span><span>الفلاسفة</span></a></li>
+        </ul>
+      </nav>
+
+      <!-- أدوات التحكم واللغات والولوج -->
+      <div class="nav-actions">
+        <!-- كبسولة تبديل اللغة الفاخرة (AR / FR) -->
+        <button class="btn-lang-luxury" id="btnLangToggle" title="Changer de langue / تبديل اللغة">
+          <span class="lang-pill-item active" id="langActiveBadge">🇲🇦 AR</span>
+          <span class="lang-divider">|</span>
+          <span class="lang-pill-item" id="langInactiveBadge">FR 🇫🇷</span>
+        </button>
+
+        <!-- زر الوضع الليلي/النهاري -->
+        <button class="btn-theme-sphere" id="btnThemeToggle" title="تبديل الثيم">
+          <!-- الأيقونة تتغير ديناميكياً -->
+        </button>
+
+        <!-- زر الهامبرغر لشاشات الهاتف -->
+        <button class="hamburger-btn" id="hamburgerBtn" aria-label="فتح القائمة">
+          <span></span>
+          <span></span>
+          <span></span>
+        </button>
+      </div>
+    </div>
+    <!-- خط الإشعاع المضيء السفلي للهيدر -->
+    <div class="header-luminous-border"></div>
+  </header>
+
+  <!-- ========================================================================
+       القائمة الجانبية المنسدلة للهاتف (Mobile Drawer)
+       ======================================================================== -->
+  <div class="drawer-backdrop" id="drawerBackdrop"></div>
+  <aside class="mobile-drawer" id="mobileDrawer">
+    <div class="drawer-header">
+      <div class="brand">
+        <div class="brand-emblem" style="width: 38px; height: 38px;">🏛️</div>
+        <span class="brand-title" style="font-size: 1.15rem;" data-i18n="site_title">فضاء الحكمة</span>
+      </div>
+      <button class="modal-close-btn" id="closeDrawerBtn">✕</button>
+    </div>
+
+    <ul class="drawer-links">
+      <li><a href="#home" class="drawer-link active" onclick="app.closeDrawer()" data-i18n="nav_home">🏠 الرئيسية</a></li>
+      <li><a href="#levels" class="drawer-link" onclick="app.closeDrawer()" data-i18n="section_levels">🎓 المستويات الدراسية</a></li>
+      <li><a href="#lessons" class="drawer-link" onclick="app.closeDrawer()" data-i18n="nav_lessons">📚 الدروس والمجزوءات</a></li>
+      <li><a href="#pedagogy" class="drawer-link" onclick="app.closeDrawer()" data-i18n="nav_pedagogy">📋 الجذاذات البيداغوجية</a></li>
+      <li><a href="#exams" class="drawer-link" onclick="app.closeDrawer()" data-i18n="nav_exams">📝 الامتحانات الوطنية</a></li>
+      <li><a href="#methodology" class="drawer-link" onclick="app.closeDrawer()" data-i18n="nav_methodology">📐 المنهجيات المعتمدة</a></li>
+      <li><a href="#philosophers" class="drawer-link" onclick="app.closeDrawer()" data-i18n="nav_philosophers">👤 أعلام الفلسفة</a></li>
+    </ul>
+
+    <div style="margin-top: auto; padding-top: 1.5rem; border-top: 1px solid var(--border-subtle); display: flex; flex-direction: column; gap: 0.8rem;">
+      <button class="btn-icon-pill" id="btnDrawerLang" style="width: 100%; justify-content: center;">
+        🌐 <span data-i18n="nav_switch_lang">Français</span>
+      </button>
+      <button class="btn-icon-pill" id="btnMobileTheme" style="width: 100%; justify-content: center;"></button>
+    </div>
+  </aside>
+
+  <!-- ========================================================================
+       الواجهة العامة للموقع (Public Content Wrapper)
+       ======================================================================== -->
+  <main id="publicContentWrapper">
+
+    <!-- قسم البطل والافتتاحية الفلسفية (Hero) مع فضاء الأغورا الإغريقية -->
+    <section class="hero-section" id="home">
+      <!-- خلفية فضاء الأغورا الفلسفية الكلاسيكية -->
+      <div class="agora-bg-container" aria-hidden="true">
+        <div class="agora-bg-image"></div>
+        <div class="agora-overlay-gradient"></div>
+        <div class="agora-light-dust"></div>
+      </div>
+
+      <div class="hero-glow-blob one"></div>
+      <div class="hero-glow-blob two"></div>
+
+      <div class="container hero-content">
+        <div class="hero-badge">
+          <span>🇲🇦</span>
+          <span>المقرر الرسمي لوزارة التربية الوطنية المغربية — الثانوي التأهيلي</span>
+        </div>
+
+        <h1 class="hero-title">
+          <span data-i18n="site_title">فضاء الحكمة والمعرفة</span><br>
+          <span class="gradient-text">لأستاذ الفلسفة بالثانوي التأهيلي</span>
+        </h1>
+
+        <!-- بطاقة القول الفلسفي الخالد -->
+        <div class="hero-quote-card">
+          <p class="hero-quote-text" data-i18n="hero_quote">
+            «الفلسفة ليست مجرد حقل معرفي مغلق، بل هي فن ممارسة التفكير النقدي وإيقاظ الوعي الإنساني»
+          </p>
+          <div class="hero-quote-author" data-i18n="hero_quote_author">
+            — ذ. أبو الوليد ابن رشد، فيلسوف قرطبة ومراكش
+          </div>
+        </div>
+
+        <!-- شريط البحث المباشر السريع -->
+        <div class="search-hero-box">
+          <div class="search-input-wrapper">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="var(--accent-gold)" stroke-width="2.5" style="margin-inline-end: 0.6rem;">
+              <circle cx="11" cy="11" r="8"></circle>
+              <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+            </svg>
+            <input type="text" id="heroSearchInput" class="search-input" placeholder="ابحث عن مفهوم (الشخص، الغير، الدولة...) أو فيلسوف أو سنة امتحان..." data-i18n-placeholder="search_placeholder">
+            <button class="btn-search-trigger">
+              <span data-i18n="btn_search">بحث</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- لوحة الإحصائيات الفورية للمنصة -->
+        <div class="stats-banner-grid">
+          <div class="stat-item-card">
+            <div class="stat-icon">👥</div>
+            <div class="stat-number">1,845+</div>
+            <div class="stat-label" data-i18n="stat_teachers">أستاذ مسجل بالمغرب</div>
+          </div>
+          <div class="stat-item-card">
+            <div class="stat-icon">📚</div>
+            <div class="stat-number">128</div>
+            <div class="stat-label" data-i18n="stat_lessons">درساً ومورداً تفاعلياً</div>
+          </div>
+          <div class="stat-item-card">
+            <div class="stat-icon">📋</div>
+            <div class="stat-number">64</div>
+            <div class="stat-label" data-i18n="stat_sheets">جذاذة بيداغوجية نموذجية</div>
+          </div>
+          <div class="stat-item-card">
+            <div class="stat-icon">🎓</div>
+            <div class="stat-number">36</div>
+            <div class="stat-label" data-i18n="stat_exams">امتحاناً وطنياً مصححاً</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- قسم المستويات والأسلاك الدراسية -->
+    <section class="py-5" id="levels">
+      <div class="container">
+        <div class="section-header">
+          <span class="section-tag">المنهاج الوزاري</span>
+          <h2 class="section-title" data-i18n="section_levels">الأسلاك والمستويات الدراسية</h2>
+          <p class="section-desc" data-i18n="section_levels_desc">هيكلة برنامج مادة الفلسفة بالمغرب وفق المستويات والتوجيهات البيداغوجية</p>
+        </div>
+        <div class="levels-grid" id="levelsContainer">
+          <!-- يتم توليد البطاقات ديناميكياً بواسطة JavaScript -->
+        </div>
+      </div>
+    </section>
+
+    <!-- قسم الدروس والمجزوءات الفلسفية -->
+    <section class="py-5" id="lessons" style="background: rgba(14, 19, 31, 0.4);">
+      <div class="container">
+        <div class="section-header">
+          <span class="section-tag">المتن المعرفي</span>
+          <h2 class="section-title" data-i18n="section_featured_lessons">الدروس والمضامين الفلسفية</h2>
+          <p class="section-desc" data-i18n="section_featured_lessons_desc">دروس مفصلة، إشكالات مؤطرة، ونصوص فلسفية محللة</p>
+        </div>
+
+        <!-- فلاتر التصفية السريعة -->
+        <div class="filter-tabs-bar">
+          <button class="filter-pill active" data-filter="all" onclick="app.filterByLevel('all')">
+            ✦ <span data-i18n="btn_filter_all">الكل</span>
+          </button>
+          <button class="filter-pill" data-filter="mod-human-condition" onclick="app.filterByLevel('mod-human-condition')">
+            مجزوءة الوضع البشري
+          </button>
+          <button class="filter-pill" data-filter="mod-knowledge" onclick="app.filterByLevel('mod-knowledge')">
+            مجزوءة المعرفة
+          </button>
+          <button class="filter-pill" data-filter="mod-politics" onclick="app.filterByLevel('mod-politics')">
+            مجزوءة السياسة
+          </button>
+          <button class="filter-pill" data-filter="mod-ethics" onclick="app.filterByLevel('mod-ethics')">
+            مجزوءة الأخلاق
+          </button>
+          <button class="filter-pill" data-filter="1bac" onclick="app.filterByLevel('1bac')">
+            الأولى باكالوريا
+          </button>
+        </div>
+
+        <!-- شبكة الدروس -->
+        <div class="lessons-grid" id="lessonsContainer">
+          <!-- يتم توليد الدروس ديناميكياً -->
+        </div>
+      </div>
+    </section>
+
+    <!-- قسم الوثائق التربوية والديداكتيك والجذاذات -->
+    <section class="py-5" id="pedagogy">
+      <div class="container">
+        <div class="section-header">
+          <span class="section-tag">الديداكتيك والكفايات</span>
+          <h2 class="section-title" data-i18n="section_pedagogy_title">الجذاذات والوثائق البيداغوجية</h2>
+          <p class="section-desc" data-i18n="section_pedagogy_desc">جذاذات ديداكتيكية رسمية، أطر مرجعية، وتوزيعات سنوية قابلة للتحميل والطباعة</p>
+        </div>
+        <div class="pedagogy-grid" id="pedagogyContainer">
+          <!-- يتم توليد الجذاذات ديناميكياً -->
+        </div>
+      </div>
+    </section>
+
+    <!-- قسم الامتحانات الوطنية الموحدة -->
+    <section class="py-5" id="exams" style="background: rgba(14, 19, 31, 0.4);">
+      <div class="container">
+        <div class="section-header">
+          <span class="section-tag">الاستحقاق الإشهادي</span>
+          <h2 class="section-title" data-i18n="section_exams_title">بنك الامتحانات الوطنية الموحدة</h2>
+          <p class="section-desc" data-i18n="section_exams_desc">أرشيف مواضيع البكالوريا الرسمية بالمغرب مع عناصر الإجابة وسلم التنقيط الموحد</p>
+        </div>
+        <div class="exams-container" id="examsContainer">
+          <!-- يتم توليد الامتحانات ديناميكياً -->
+        </div>
+      </div>
+    </section>
+
+    <!-- قسم المنهجيات الفلسفية الرسمية -->
+    <section class="py-5" id="methodology">
+      <div class="container">
+        <div class="section-header">
+          <span class="section-tag">التقويم والإنشاء</span>
+          <h2 class="section-title" data-i18n="section_methodology_title">المنهجيات المعتمدة وزارياً</h2>
+          <p class="section-desc">شبكات التقويم الدقيق لصيغ الامتحان الوطني الثلاث: السؤال، القولة، والنص</p>
+        </div>
+        <div class="pedagogy-grid" id="methodologyContainer">
+          <!-- يتم توليد محتوى المنهجية ديناميكياً -->
+        </div>
+      </div>
+    </section>
+
+    <!-- قسم أعلام الفلسفة والمفاهيم -->
+    <section class="py-5" id="philosophers" style="background: rgba(14, 19, 31, 0.4);">
+      <div class="container">
+        <div class="section-header">
+          <span class="section-tag">أروقة الفكر</span>
+          <h2 class="section-title" data-i18n="section_philosophers_title">رواق أعلام الفلسفة والمفاهيم</h2>
+          <p class="section-desc">بطاقات بيوغرافية وفلسفية لأبرز الفلاسفة المبرمجين في المقرر المغربي</p>
+        </div>
+        <div class="philosophers-grid" id="philosophersContainer">
+          <!-- يتم توليد بطاقات الفلاسفة ديناميكياً -->
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- ========================================================================
+       لوحة الإدارة والتحكم (Admin Dashboard Wrapper)
+       ======================================================================== -->
+  <section class="admin-view-wrapper" id="adminViewWrapper">
+    <div class="container">
+      <!-- شريط العنوان والتحكم في لوحة الإدارة -->
+      <div class="admin-header-bar">
+        <div class="admin-title-area">
+          <h2>
+            <span>🛠️</span>
+            <span data-i18n="admin_title">لوحة القيادة والإدارة التربوية</span>
+          </h2>
+          <p data-i18n="admin_subtitle">إدارة الموارد، المنشورات الديداكتيكية، وإحصاءات منصة فضاء الحكمة</p>
+        </div>
+
+        <div class="admin-controls-group">
+          <button class="btn-download primary" id="btnAddNewResource">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+            <span data-i18n="btn_add_resource">إضافة مورد جديد</span>
+          </button>
+          <button class="btn-download" id="btnExitAdmin">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path><polyline points="16 17 21 12 16 7"></polyline><line x1="21" y1="12" x2="9" y2="12"></line></svg>
+            <span data-i18n="btn_logout_admin">تسجيل الخروج والعودة</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- مقاييس وإحصائيات لوحة الإدارة -->
+      <div class="admin-metrics-grid">
+        <div class="metric-card">
+          <div class="metric-icon-box amber">📚</div>
+          <div class="metric-data">
+            <h4 id="metricLessons">128</h4>
+            <p data-i18n="stat_lessons">دروس وموارد نشطة</p>
+          </div>
+        </div>
+        <div class="metric-card">
+          <div class="metric-icon-box purple">📋</div>
+          <div class="metric-data">
+            <h4 id="metricPedagogy">64</h4>
+            <p data-i18n="stat_sheets">جذاذة بيداغوجية</p>
+          </div>
+        </div>
+        <div class="metric-card">
+          <div class="metric-icon-box blue">🎓</div>
+          <div class="metric-data">
+            <h4 id="metricExams">36</h4>
+            <p data-i18n="stat_exams">امتحانات مصححة</p>
+          </div>
+        </div>
+        <div class="metric-card">
+          <div class="metric-icon-box green">👥</div>
+          <div class="metric-data">
+            <h4 id="metricTeachers">1,845</h4>
+            <p data-i18n="stat_teachers">أستاذ مسجل بالمغرب</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- تبويبات لوحة الإدارة -->
+      <div class="admin-nav-tabs">
+        <button class="admin-tab-btn active" data-admin-tab="overview">
+          📊 <span data-i18n="admin_tab_overview">نظرة عامة وإحصائيات</span>
+        </button>
+        <button class="admin-tab-btn" data-admin-tab="lessons">
+          📝 <span data-i18n="admin_tab_content">إدارة الدروس</span>
+        </button>
+        <button class="admin-tab-btn" data-admin-tab="pedagogy">
+          📋 <span data-i18n="admin_tab_pedagogy">إدارة الجذاذات</span>
+        </button>
+        <button class="admin-tab-btn" data-admin-tab="exams">
+          🎓 <span data-i18n="admin_tab_exams">إدارة الامتحانات</span>
+        </button>
+        <button class="admin-tab-btn" data-admin-tab="teachers">
+          👥 <span data-i18n="admin_tab_teachers">الأساتذة والمنخرطون</span>
+        </button>
+      </div>
+
+      <!-- حاوية الجدول والمحتوى التفاعلي للإدارة -->
+      <div class="admin-card-table-wrapper" id="adminTableContentArea">
+        <!-- يتم ملؤها ديناميكياً بواسطة admin.js -->
+      </div>
+    </div>
+  </section>
+
+  <!-- ========================================================================
+       المودال العام لعرض تفاصيل الدروس والجذاذات (Generic Modal)
+       ======================================================================== -->
+  <div class="modal-overlay" id="genericModalOverlay">
+    <div class="modal-box">
+      <div class="modal-header">
+        <h3 class="modal-title" id="genericModalTitle">تفاصيل المورد</h3>
+        <button class="modal-close-btn" onclick="app.closeModal()">✕</button>
+      </div>
+      <div class="modal-body" id="genericModalBody">
+        <!-- المحتوى يملأ ديناميكياً -->
+      </div>
+    </div>
+  </div>
+
+  <!-- ========================================================================
+       مودال إضافة / تعديل مورد في لوحة الإدارة (Admin Resource Modal)
+       ======================================================================== -->
+  <div class="modal-overlay" id="adminResourceModal">
+    <div class="modal-box">
+      <div class="modal-header">
+        <h3 class="modal-title" id="adminModalTitle" data-i18n="modal_add_title">إضافة مورد فلسفي جديد</h3>
+        <button class="modal-close-btn" id="closeAdminModalBtn">✕</button>
+      </div>
+      <form id="resourceForm">
+        <div class="modal-body">
+          <div class="form-group">
+            <label class="form-label" for="formTitleAr" data-i18n="form_label_title_ar">العنوان بالعربية</label>
+            <input type="text" id="formTitleAr" class="form-input" required placeholder="مثال: مفهوم الشخص بين الضرورة والحرية">
+          </div>
+
+          <div class="form-group">
+            <label class="form-label" for="formTitleFr" data-i18n="form_label_title_fr">العنوان بالفرنسية</label>
+            <input type="text" id="formTitleFr" class="form-input" placeholder="Ex: La Personne entre Nécessité et Liberté">
+          </div>
+
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+            <div class="form-group">
+              <label class="form-label" for="formLevel" data-i18n="form_label_level">المستوى الدراسي</label>
+              <select id="formLevel" class="form-select">
+                <option value="2bac">الثانية باكالوريا (2 Bac)</option>
+                <option value="1bac">الأولى باكالوريا (1 Bac)</option>
+                <option value="tc">الجذع المشترك (Tronc Commun)</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label class="form-label" for="formModule" data-i18n="form_label_module">المجزوءة الفلسفية</label>
+              <select id="formModule" class="form-select">
+                <option value="mod-human-condition">مجزوءة الوضع البشري</option>
+                <option value="mod-knowledge">مجزوءة المعرفة</option>
+                <option value="mod-politics">مجزوءة السياسة</option>
+                <option value="mod-ethics">مجزوءة الأخلاق</option>
+                <option value="mod-1bac-man">مجزوءة الإنسان (1 باك)</option>
+                <option value="mod-tc-philosophy">مدخل الفلسفة (جذع مشترك)</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label" for="formAuthor" data-i18n="form_label_author">اسم الأستاذ / المؤطر</label>
+            <input type="text" id="formAuthor" class="form-input" required placeholder="مثال: ذ. عبد الله العروي">
+          </div>
+
+          <div class="form-group">
+            <label class="form-label" for="formSummary" data-i18n="form_label_summary_ar">الملخص الإشكالي والمقدمة</label>
+            <textarea id="formSummary" class="form-textarea" rows="3" required placeholder="صياغة المفارقة الفلسفية والتساؤلات الإشكالية الموجهة..."></textarea>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label" for="formContent" data-i18n="form_label_content_ar">المحتوى التفصيلي ومحاور الدرس</label>
+            <textarea id="formContent" class="form-textarea" rows="5" required placeholder="تحليل الأطروحات، المفاهيم، وحجج الفلاسفة (ديكارت، كانط، سبينوزا...)"></textarea>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label" for="formTags" data-i18n="form_label_tags">الكلمات المفتاحية (مفصولة بفاصلة)</label>
+            <input type="text" id="formTags" class="form-input" placeholder="الشخص, الهوية, الوعي, سارتر">
+          </div>
+        </div>
+
+        <div class="modal-footer">
+          <button type="button" class="btn-download" id="cancelAdminModalBtn" data-i18n="btn_cancel">إلغاء</button>
+          <button type="submit" class="btn-download primary" data-i18n="btn_save">حفظ المورد في المنصة</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- ========================================================================
+       مودال تسجيل الدخول كمدير (Admin Login Modal)
+       ======================================================================== -->
+  <div class="modal-overlay" id="adminLoginModal">
+    <div class="modal-box modal-box-login">
+      <div class="modal-header">
+        <h3 class="modal-title">
+          <span class="login-lock-badge">🔐</span>
+          <span data-i18n="admin_login_title">تسجيل الدخول كمدير</span>
+        </h3>
+        <button class="modal-close-btn" id="closeAdminLoginBtn">✕</button>
+      </div>
+      <form id="adminLoginForm">
+        <div class="modal-body">
+          <div class="admin-login-notice">
+            <div class="notice-icon">🏛️</div>
+            <div class="notice-text">
+              <strong>فضاء الإدارة والتحكم التربوي</strong>
+              <p>يرجى إدخال بيانات الاعتماد للوصول إلى لوحة التحكم وإدارة الموارد والدروس.</p>
+            </div>
+          </div>
+          
+          <div class="form-group">
+            <label class="form-label" for="adminUsername" data-i18n="admin_username_label">اسم المستخدم / المعرف</label>
+            <div class="input-with-icon">
+              <span class="field-icon">👤</span>
+              <input type="text" id="adminUsername" class="form-input" required autocomplete="username" placeholder="admin">
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label" for="adminPassword" data-i18n="admin_password_label">كلمة المرور</label>
+            <div class="input-with-icon password-wrapper">
+              <span class="field-icon">🔑</span>
+              <input type="password" id="adminPassword" class="form-input" required autocomplete="current-password" placeholder="••••••••">
+              <button type="button" class="btn-pwd-eye" id="btnToggleAdminPwd" title="إظهار / إخفاء كلمة المرور">👁️</button>
+            </div>
+          </div>
+
+          <div class="login-credentials-hint">
+            <span class="hint-badge">💡 الحساب المبرمج:</span>
+            <span>المعرف: <code>admin</code> | كلمة المرور: <code>admin2026</code></span>
+          </div>
+
+          <div id="adminLoginError" class="login-error-alert" style="display: none;">
+            <span>⚠️</span>
+            <span id="adminLoginErrorText" data-i18n="admin_login_error">اسم المستخدم أو كلمة المرور غير صحيحة. يرجى المحاولة مرة أخرى.</span>
+          </div>
+        </div>
+
+        <div class="modal-footer login-modal-footer">
+          <button type="button" class="btn-download" id="cancelAdminLoginBtn" data-i18n="btn_cancel">إلغاء</button>
+          <button type="submit" class="btn-download primary btn-login-submit" id="btnSubmitAdminLogin">
+            <span data-i18n="btn_login_submit">تسجيل الدخول كمدير</span>
+            <span class="btn-arrow">←</span>
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- ========================================================================
+       شريط الملاحة السفلي للهاتف الذكي (Mobile Bottom Bar)
+       ======================================================================== -->
+  <nav class="mobile-bottom-bar" id="mobileBottomBar">
+    <div class="mobile-bottom-nav">
+      <a href="#home" class="mobile-nav-btn active">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path><polyline points="9 22 9 12 15 12 15 22"></polyline></svg>
+        <span data-i18n="nav_home">الرئيسية</span>
+      </a>
+      <a href="#lessons" class="mobile-nav-btn">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path></svg>
+        <span data-i18n="nav_lessons">الدروس</span>
+      </a>
+      <a href="#exams" class="mobile-nav-btn">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>
+        <span data-i18n="nav_exams">الامتحانات</span>
+      </a>
+    </div>
+  </nav>
+
+  <!-- ========================================================================
+       التذييل الختامي للموقع (Footer)
+       ======================================================================== -->
+  <footer class="site-footer">
+    <div class="container footer-grid">
+      <div class="footer-brand">
+        <div class="brand">
+          <div class="brand-emblem" style="width: 40px; height: 40px;">🏛️</div>
+          <span class="brand-title" data-i18n="site_title">فضاء الحكمة والمعرفة</span>
+        </div>
+        <p data-i18n="footer_desc">
+          منصة تعليمية وتربوية موجهة لهيئة تدريس مادة الفلسفة بالثانوي التأهيلي في المملكة المغربية، تهدف إلى تجويد الممارسة الديداكتيكية ونشر ثقافة التفلسف.
+        </p>
+      </div>
+
+      <div>
+        <h4 class="footer-heading" data-i18n="footer_quick_links">روابط سريعة</h4>
+        <ul class="footer-links-list">
+          <li class="footer-link-item"><a href="#levels" data-i18n="section_levels">الأسلاك والمستويات</a></li>
+          <li class="footer-link-item"><a href="#lessons" data-i18n="nav_lessons">المجزوءات الفلسفية</a></li>
+          <li class="footer-link-item"><a href="#pedagogy" data-i18n="nav_pedagogy">الجذاذات البيداغوجية</a></li>
+          <li class="footer-link-item"><a href="#exams" data-i18n="nav_exams">الامتحانات الوطنية الموحدة</a></li>
+          <li class="footer-link-item"><a href="#philosophers" data-i18n="nav_philosophers">رواق أعلام الفلسفة</a></li>
+          <li class="footer-link-item"><a href="#admin" id="linkAdminQuickLogin" class="footer-admin-link"><span>🔐</span> <span data-i18n="footer_admin_quick">فضاء المدير التربوي</span></a></li>
+        </ul>
+      </div>
+
+      <div>
+        <h4 class="footer-heading" data-i18n="footer_official_links">مصادر وبوابات رسمية</h4>
+        <ul class="footer-links-list">
+          <li class="footer-link-item"><a href="https://www.men.gov.ma" target="_blank" rel="noopener" data-i18n="footer_link_men">وزارة التربية الوطنية المغربية</a></li>
+          <li class="footer-link-item"><a href="#" data-i18n="footer_link_cne">المركز الوطني للتقويم والامتحانات</a></li>
+          <li class="footer-link-item"><a href="#" data-i18n="footer_link_orientation">بوابة التوجيه والمناهج</a></li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="container footer-bottom">
+      <div class="footer-bottom-meta">
+        <div data-i18n="footer_rights">جميع الحقوق محفوظة لمنصة فضاء الحكمة والمعرفة © 2026</div>
+        <div data-i18n="footer_dev_note">تم التطوير وفق المعايير البيداغوجية والديداكتيكية المغربية الحديثة</div>
+      </div>
+      <a href="#admin" id="linkAdminLogin" class="footer-admin-pill-link" title="تسجيل الدخول كمدير">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
+        <span data-i18n="footer_admin_login">تسجيل الدخول كمدير</span>
+      </a>
+    </div>
+  </footer>
+
+  <!-- استدعاء البرمجيات التفاعلية بالتسلسل الصحيح -->
+  <script src="js/data.js"></script>
+  <script src="js/i18n.js"></script>
+  <script src="js/app.js"></script>
+  <script src="js/admin.js"></script>
+</body>
+</html>
