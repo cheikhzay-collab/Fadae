@@ -553,30 +553,42 @@ class AdminManager {
         status: "published"
       };
       PHILO_DATA.lessons.unshift(newLesson);
+    }
 
-      // مزامنة فورية مع قاعدة بيانات Hostinger
-      try {
-        fetch("api/lessons.php", {
+    // حفظ التغييرات فوراً ودائماً في التخزين المحلي للمتصفح
+    this.persistLessons();
+
+    // مزامنة فورية مع الخادم وقاعدة البيانات إن وجدت (Hostinger / Node.js)
+    try {
+      const payload = this.editingId ? PHILO_DATA.lessons.find(l => l.id === this.editingId) : PHILO_DATA.lessons[0];
+      fetch("api/lessons.php", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload)
+      }).catch(() => {
+        fetch("/api/lessons", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            title_ar: titleAr,
-            title_fr: titleFr,
-            level_id: levelId,
-            module_id: moduleId,
-            author,
-            summary_ar: summaryAr,
-            content_ar: contentAr,
-            tags_ar: tags.join(", ")
-          })
+          body: JSON.stringify(payload)
         }).catch(() => {});
-      } catch (e) {}
-    }
+      });
+    } catch (e) {}
 
     this.closeResourceModal();
     this.renderAdminView();
     window.app.renderLessons();
-    window.app.showToast(window.i18n.t("form_save_success"));
+    window.app.showToast(window.i18n.t("form_save_success") || "تم حفظ المورد بنجاح في المنصة!");
+  }
+
+  persistLessons() {
+    try {
+      localStorage.setItem("philo_stored_lessons", JSON.stringify(PHILO_DATA.lessons));
+      if (PHILO_DATA.adminStats) {
+        PHILO_DATA.adminStats.activeLessons = PHILO_DATA.lessons.length;
+      }
+    } catch (e) {
+      console.warn("Could not save to localStorage:", e);
+    }
   }
 
   editLesson(id) {
@@ -588,21 +600,28 @@ class AdminManager {
     const lesson = PHILO_DATA.lessons.find(l => l.id === id);
     if (lesson) {
       lesson.status = lesson.status === "published" ? "draft" : "published";
+      this.persistLessons();
       this.renderAdminTab();
       window.app.renderLessons();
-      window.app.showToast("تم تحديث حالة النشر بنجاح!");
+      window.app.showToast("تم تحديث حالة النشر بنجاح وحفظ التغيير!");
     }
   }
 
   deleteLesson(id) {
-    if (confirm(window.i18n.t("delete_confirm"))) {
+    if (confirm(window.i18n.t("delete_confirm") || "هل أنت متأكد من حذف هذا المورد نهائياً؟")) {
       PHILO_DATA.lessons = PHILO_DATA.lessons.filter(l => l.id !== id);
+      this.persistLessons();
+
+      // مزامنة الحذف مع الخادم وقاعدة البيانات (Hostinger / Node)
       try {
-        fetch(`api/lessons.php?id=${encodeURIComponent(id)}`, { method: "DELETE" }).catch(() => {});
+        fetch(`api/lessons.php?id=${encodeURIComponent(id)}`, { method: "DELETE" }).catch(() => {
+          fetch(`/api/lessons?id=${encodeURIComponent(id)}`, { method: "DELETE" }).catch(() => {});
+        });
       } catch (e) {}
+
       this.renderAdminView();
       window.app.renderLessons();
-      window.app.showToast("تم حذف المورد بنجاح من المنصة.");
+      window.app.showToast("تم حذف المورد بنجاح وتحديث قاعدة البيانات.");
     }
   }
 

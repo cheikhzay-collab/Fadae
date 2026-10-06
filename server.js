@@ -35,6 +35,73 @@ const server = http.createServer((req, res) => {
     return;
   }
 
+  // التعامل مع طلبات API الدروس محلياً لحفظ وتعديل وحذف الدروس
+  if (reqUrl === '/api/lessons' || reqUrl === '/api/lessons.php') {
+    res.setHeader('Content-Type', 'application/json; charset=utf-8');
+    res.setHeader('Access-Control-Allow-Origin', '*');
+    res.setHeader('Access-Control-Allow-Methods', 'GET, POST, DELETE, OPTIONS');
+    res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
+
+    if (req.method === 'OPTIONS') {
+      res.writeHead(200);
+      res.end();
+      return;
+    }
+
+    const dataFile = path.join(PUBLIC_DIR, 'data_lessons.json');
+    let storedLessons = [];
+    if (fs.existsSync(dataFile)) {
+      try {
+        storedLessons = JSON.parse(fs.readFileSync(dataFile, 'utf-8'));
+      } catch (e) {}
+    }
+
+    if (req.method === 'GET') {
+      res.writeHead(200);
+      res.end(JSON.stringify({ success: true, count: storedLessons.length, data: storedLessons }));
+      return;
+    }
+
+    if (req.method === 'POST') {
+      let body = '';
+      req.on('data', chunk => { body += chunk; });
+      req.on('end', () => {
+        try {
+          const item = JSON.parse(body);
+          if (!item.id) item.id = 'les-' + Date.now();
+          const existingIdx = storedLessons.findIndex(l => l.id === item.id);
+          if (existingIdx !== -1) {
+            storedLessons[existingIdx] = item;
+          } else {
+            storedLessons.unshift(item);
+          }
+          fs.writeFileSync(dataFile, JSON.stringify(storedLessons, null, 2), 'utf-8');
+          res.writeHead(200);
+          res.end(JSON.stringify({ success: true, message: 'تم الحفظ بنجاح', data: item }));
+        } catch (err) {
+          res.writeHead(400);
+          res.end(JSON.stringify({ success: false, error: err.message }));
+        }
+      });
+      return;
+    }
+
+    if (req.method === 'DELETE') {
+      const urlParams = new URL(req.url, `http://${req.headers.host || 'localhost'}`);
+      const idToDelete = urlParams.searchParams.get('id');
+      if (idToDelete) {
+        storedLessons = storedLessons.filter(l => l.id !== idToDelete);
+        fs.writeFileSync(dataFile, JSON.stringify(storedLessons, null, 2), 'utf-8');
+        res.writeHead(200);
+        res.end(JSON.stringify({ success: true, message: 'تم الحذف بنجاح' }));
+      } else {
+        res.writeHead(400);
+        res.end(JSON.stringify({ success: false, message: 'معرف الدرس مطلوب' }));
+      }
+      return;
+    }
+  }
+
   const filePath = path.join(PUBLIC_DIR, reqUrl);
 
   // حماية المسار

@@ -647,7 +647,18 @@ const PHILO_DATA = {
       { name: "ذ. سفيان البوعناني", role: "أستاذ متدرب", city: "طنجة", time: "منذ 3 ساعات", status: "offline" }
     ]
   }
-};
+// استرجاع الدروس والبيانات المحفوظة محلياً إن وجدت لضمان عدم ضياع التعديلات والإضافات
+try {
+  const savedLessons = localStorage.getItem("philo_stored_lessons");
+  if (savedLessons) {
+    const parsed = JSON.parse(savedLessons);
+    if (Array.isArray(parsed) && parsed.length > 0) {
+      PHILO_DATA.lessons = parsed;
+    }
+  }
+} catch (e) {
+  console.warn("Could not read localStorage lessons:", e);
+}
 
 // جعل البيانات متاحة على النافذة العامة
 window.PHILO_DATA = PHILO_DATA;
