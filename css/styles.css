@@ -94,6 +94,9 @@
 html {
   scroll-behavior: smooth;
   font-size: 16px;
+  overflow-x: hidden;
+  max-width: 100vw;
+  width: 100%;
 }
 
 body {
@@ -103,6 +106,9 @@ body {
   line-height: 1.65;
   min-height: 100vh;
   overflow-x: hidden;
+  max-width: 100vw;
+  width: 100%;
+  position: relative;
   transition: background-color var(--transition-normal), color var(--transition-normal);
   background-image: 
     radial-gradient(circle at 15% 10%, rgba(139, 92, 246, 0.08) 0%, transparent 40%),
@@ -113,6 +119,13 @@ body {
 
 html[lang="fr"] body {
   font-family: var(--font-latin);
+}
+
+#publicContentWrapper {
+  width: 100%;
+  max-width: 100vw;
+  overflow-x: hidden;
+  position: relative;
 }
 
 /* الروابط والأزرار */
@@ -1950,19 +1963,24 @@ html[lang="fr"] .philosopher-quote {
   border-inline-end: 1px solid var(--border-medium);
   z-index: 1500;
   transform: translateX(-100%);
-  transition: transform var(--transition-normal);
+  transition: transform var(--transition-normal), visibility var(--transition-normal);
   display: flex;
   flex-direction: column;
   padding: 1.8rem 1.5rem;
   box-shadow: var(--shadow-lg);
+  visibility: hidden;
+  pointer-events: none;
 }
 
-html[dir="rtl"] .mobile-drawer {
+html[dir="rtl"] .mobile-drawer,
+body.rtl .mobile-drawer {
   transform: translateX(100%);
 }
 
 .mobile-drawer.open {
   transform: translateX(0) !important;
+  visibility: visible !important;
+  pointer-events: auto !important;
 }
 
 .drawer-backdrop {
@@ -2358,11 +2376,22 @@ html[dir="ltr"] .btn-login-submit:hover .btn-arrow {
 }
 
 @media (max-width: 768px) {
+  /* منع أي تجاوز أفقي على الإطلاق على شاشات الهواتف */
+  html, body {
+    overflow-x: hidden !important;
+    max-width: 100vw !important;
+    width: 100% !important;
+  }
+
   /* تعديل تخطيط الصفحة وشريط الأمان في الهاتف */
   body {
     padding-bottom: calc(76px + env(safe-area-inset-bottom, 0px));
     -webkit-tap-highlight-color: transparent;
-    overflow-x: hidden;
+  }
+
+  /* إخفاء الشريط التوجيهي الطويل على الهاتف كلياً لأنه يتجاوز عرض الشاشة */
+  .top-official-bar {
+    display: none !important;
   }
 
   /* تفاعل اللمس السريع الشبيه بالتطبيقات */
@@ -2377,62 +2406,119 @@ html[dir="ltr"] .btn-login-submit:hover .btn-arrow {
   /* الشريط العلوي */
   .site-header {
     padding-top: env(safe-area-inset-top, 0px);
+    width: 100%;
+    max-width: 100vw;
+    box-sizing: border-box;
+    overflow-x: clip;
   }
 
   .nav-container {
-    height: 60px;
-    padding: 0 1rem;
+    height: 56px;
+    padding: 0 0.75rem;
+    width: 100%;
+    max-width: 100vw;
+    box-sizing: border-box;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.4rem;
+  }
+
+  .brand {
+    display: flex;
+    align-items: center;
+    gap: 0.45rem;
+    min-width: 0;
+    flex-shrink: 1;
+    overflow: hidden;
+  }
+
+  .brand-text {
+    min-width: 0;
+    overflow: hidden;
+  }
+
+  .brand-title-wrap {
+    min-width: 0;
+    overflow: hidden;
   }
 
   .brand-title {
-    font-size: 1.05rem;
+    font-size: 0.95rem !important;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    display: block;
   }
 
-  .brand-tag-mini {
-    display: none;
-  }
-
-  .brand-subtitle {
-    display: none;
+  .brand-tag-mini, .brand-subtitle {
+    display: none !important;
   }
 
   .brand-emblem {
-    width: 36px;
-    height: 36px;
+    width: 32px;
+    height: 32px;
+    min-width: 32px;
+    flex-shrink: 0;
   }
 
   .emblem-svg {
-    width: 26px;
-    height: 26px;
+    width: 22px;
+    height: 22px;
+  }
+
+  .nav-actions {
+    display: flex;
+    align-items: center;
+    gap: 0.35rem;
+    flex-shrink: 0;
   }
 
   .hamburger-btn {
     display: flex;
-    width: 38px;
-    height: 38px;
+    width: 34px;
+    height: 34px;
+    min-width: 34px;
+    padding: 6px;
   }
 
   .btn-theme-sphere {
-    width: 38px;
-    height: 38px;
+    width: 34px;
+    height: 34px;
+    min-width: 34px;
   }
 
   .btn-lang-luxury {
-    padding: 0.35rem 0.65rem;
-    font-size: 0.78rem;
+    padding: 0.28rem 0.5rem;
+    font-size: 0.72rem;
   }
 
   .btn-admin-cta-desktop, .links-official {
-    display: none;
-  }
-
-  .top-official-bar {
-    font-size: 0.7rem;
-    padding: 0.3rem 0;
+    display: none !important;
   }
 
   .mobile-bottom-bar {
     display: block;
+  }
+
+  .hero-glow-blob {
+    display: none !important;
+  }
+
+  .container {
+    padding-left: 1rem !important;
+    padding-right: 1rem !important;
+    max-width: 100vw !important;
+    box-sizing: border-box !important;
+  }
+
+  .hero-badge {
+    font-size: 0.72rem;
+    padding: 0.35rem 0.75rem;
+    max-width: 95%;
+    white-space: normal;
+    text-align: center;
+    line-height: 1.4;
   }
 
   /* قسم البطل الرئيسي في الهاتف */
