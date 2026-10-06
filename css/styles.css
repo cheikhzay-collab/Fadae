@@ -1875,6 +1875,19 @@ html[lang="fr"] .philosopher-quote {
   user-select: none;
   touch-action: manipulation;
   transition: all var(--transition-fast);
+  min-width: 0;
+  overflow: hidden;
+}
+
+.mobile-nav-btn span {
+  display: block;
+  white-space: nowrap;
+  font-size: 0.68rem;
+  line-height: 1.15;
+  text-align: center;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 100%;
 }
 
 .mobile-nav-btn .nav-icon-wrap {
