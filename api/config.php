@@ -23,8 +23,10 @@ $DB_NAME = getenv('DB_NAME') ?: 'u123456789_fadae';
 $DB_USER = getenv('DB_USER') ?: 'u123456789_admin';
 $DB_PASS = getenv('DB_PASS') ?: '';
 
+$DB_CONNECTION_ERROR = null;
+
 function get_db_connection() {
-    global $DB_HOST, $DB_NAME, $DB_USER, $DB_PASS;
+    global $DB_HOST, $DB_NAME, $DB_USER, $DB_PASS, $DB_CONNECTION_ERROR;
     
     try {
         $dsn = "mysql:host={$DB_HOST};dbname={$DB_NAME};charset=utf8mb4";
@@ -36,6 +38,7 @@ function get_db_connection() {
         ];
         return new PDO($dsn, $DB_USER, $DB_PASS, $options);
     } catch (PDOException $e) {
+        $DB_CONNECTION_ERROR = $e->getMessage();
         return null;
     }
 }

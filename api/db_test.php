@@ -120,6 +120,14 @@ $pdo = get_db_connection();
     <?php else: ?>
       <div>
         <span class="badge-warning">⚠️ لم يتم الاتصال بقاعدة البيانات بعد</span>
+        
+        <?php if (!empty($DB_CONNECTION_ERROR)): ?>
+          <div style="background: rgba(239, 68, 68, 0.15); border: 1px solid #ef4444; color: #fca5a5; padding: 1rem; border-radius: 8px; margin: 1rem 0; font-family: monospace; font-size: 0.9rem; direction: ltr; text-align: left;">
+            <strong>Error Details:</strong><br>
+            <?= htmlspecialchars($DB_CONNECTION_ERROR) ?>
+          </div>
+        <?php endif; ?>
+
         <p style="margin-top: 1rem;">يرجى التأكد من تحديث بيانات الاتصال في ملف <code>api/config.php</code>:</p>
         <ul>
           <li><strong>DB_HOST:</strong> <code>localhost</code></li>
