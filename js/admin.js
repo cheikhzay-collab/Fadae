@@ -158,14 +158,35 @@ class AdminManager {
     }
   }
 
-  handleLoginSubmit(e) {
+  async handleLoginSubmit(e) {
     e.preventDefault();
     const username = document.getElementById("adminUsername")?.value.trim() || "";
     const password = document.getElementById("adminPassword")?.value || "";
     const errorEl = document.getElementById("adminLoginError");
 
-    // بيانات الدخول المعتمدة (اسم المستخدم: admin وكلمة المرور: admin أو admin2026)
-    if (username.toLowerCase() === "admin" && (password === "admin2026" || password === "admin")) {
+    // محاولة التحقق عبر API قاعدة بيانات Hostinger أولاً مع دعم العمل المحلي
+    let authenticated = false;
+    try {
+      const res = await fetch("api/auth.php", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ username, password })
+      });
+      if (res.ok) {
+        const data = await res.json();
+        if (data && data.success) authenticated = true;
+      }
+    } catch (err) {
+      // الاتصال بالـ API غير متاح محلياً
+    }
+
+    if (!authenticated) {
+      if (username.toLowerCase() === "admin" && (password === "admin2026" || password === "admin")) {
+        authenticated = true;
+      }
+    }
+
+    if (authenticated) {
       sessionStorage.setItem("philo_admin_auth", "true");
       this.closeLoginModal();
       this.toggleAdminView(true);
@@ -532,6 +553,24 @@ class AdminManager {
         status: "published"
       };
       PHILO_DATA.lessons.unshift(newLesson);
+
+      // مزامنة فورية مع قاعدة بيانات Hostinger
+      try {
+        fetch("api/lessons.php", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            title_ar: titleAr,
+            title_fr: titleFr,
+            level_id: levelId,
+            module_id: moduleId,
+            author,
+            summary_ar: summaryAr,
+            content_ar: contentAr,
+            tags_ar: tags.join(", ")
+          })
+        }).catch(() => {});
+      } catch (e) {}
     }
 
     this.closeResourceModal();
@@ -558,6 +597,9 @@ class AdminManager {
   deleteLesson(id) {
     if (confirm(window.i18n.t("delete_confirm"))) {
       PHILO_DATA.lessons = PHILO_DATA.lessons.filter(l => l.id !== id);
+      try {
+        fetch(`api/lessons.php?id=${encodeURIComponent(id)}`, { method: "DELETE" }).catch(() => {});
+      } catch (e) {}
       this.renderAdminView();
       window.app.renderLessons();
       window.app.showToast("تم حذف المورد بنجاح من المنصة.");
