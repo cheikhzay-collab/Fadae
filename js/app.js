@@ -85,17 +85,37 @@ class AppManager {
   }
 
   setupTheme() {
-    const savedTheme = localStorage.getItem("philo_theme") || "dark";
+    const savedTheme = localStorage.getItem("philo_theme") || "light";
     document.documentElement.setAttribute("data-theme", savedTheme);
     this.updateThemeButton(savedTheme);
+    this.updateThemePills(savedTheme);
+  }
+
+  setExactTheme(theme) {
+    document.documentElement.setAttribute("data-theme", theme);
+    localStorage.setItem("philo_theme", theme);
+    this.updateThemeButton(theme);
+    this.updateThemePills(theme);
+  }
+
+  updateThemePills(theme) {
+    const lightPill = document.getElementById("themePillLight");
+    const darkPill = document.getElementById("themePillDark");
+    if (lightPill && darkPill) {
+      if (theme === "light") {
+        lightPill.classList.add("active");
+        darkPill.classList.remove("active");
+      } else {
+        lightPill.classList.remove("active");
+        darkPill.classList.add("active");
+      }
+    }
   }
 
   toggleTheme() {
-    const current = document.documentElement.getAttribute("data-theme") || "dark";
+    const current = document.documentElement.getAttribute("data-theme") || "light";
     const next = current === "dark" ? "light" : "dark";
-    document.documentElement.setAttribute("data-theme", next);
-    localStorage.setItem("philo_theme", next);
-    this.updateThemeButton(next);
+    this.setExactTheme(next);
   }
 
   updateThemeButton(theme) {
@@ -111,7 +131,6 @@ class AppManager {
       : `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg>`;
 
     if (btn) {
-      btn.innerHTML = icon;
       btn.title = label;
     }
     if (mobileBtn) mobileBtn.innerHTML = `${icon} <span>${label}</span>`;
@@ -169,12 +188,19 @@ class AppManager {
 
     // البحث المباشر
     const searchInput = document.getElementById("heroSearchInput");
-    if (searchInput) {
-      searchInput.addEventListener("input", (e) => {
-        this.searchQuery = e.target.value.toLowerCase().trim();
-        this.renderLessons();
-      });
-    }
+    const exactSearch = document.getElementById("exactSearchInput");
+
+    const handleSearch = (e) => {
+      this.searchQuery = e.target.value.toLowerCase().trim();
+      this.renderLessons();
+      const lessonsSection = document.getElementById("lessons");
+      if (this.searchQuery.length > 1 && lessonsSection) {
+        lessonsSection.scrollIntoView({ behavior: "smooth" });
+      }
+    };
+
+    if (searchInput) searchInput.addEventListener("input", handleSearch);
+    if (exactSearch) exactSearch.addEventListener("input", handleSearch);
 
     // إغلاق المودال بالنقر خارج الصندوق
     const modalOverlay = document.getElementById("genericModalOverlay");
@@ -565,6 +591,103 @@ class AppManager {
     this.showToast(`جاري تجهيز وتحميل "${title}" بصيغة ${format}...`);
   }
 
+  openBooksModal(e) {
+    if (e) e.preventDefault();
+    const title = "📚 أشهر الكتب والمؤلفات الفلسفية الخالدة";
+    const bodyHtml = `
+      <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 1rem; margin-top: 1rem;">
+        <div style="background: rgba(255,255,255,0.05); padding: 1.1rem; border-radius: 12px; border: 1px solid var(--border-subtle);">
+          <h4 style="color: var(--accent-gold); font-size: 1.05rem; margin-bottom: 0.3rem;">الجمهورية (Politeia)</h4>
+          <p style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 0.4rem;">أفلاطون (Plato) — القرن 4 ق.م</p>
+          <p style="font-size: 0.88rem; line-height: 1.5; color: var(--text-secondary);">تأسيس لمفهوم العدالة والدولة الفاضلة ونظرية المعرفة ومثَل الكهف الشهير.</p>
+        </div>
+        <div style="background: rgba(255,255,255,0.05); padding: 1.1rem; border-radius: 12px; border: 1px solid var(--border-subtle);">
+          <h4 style="color: var(--accent-gold); font-size: 1.05rem; margin-bottom: 0.3rem;">فصل المقال</h4>
+          <p style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 0.4rem;">ابن رشد (Averroes) — 1179م</p>
+          <p style="font-size: 0.88rem; line-height: 1.5; color: var(--text-secondary);">تقرير ما بين الشريعة والحكمة من الاتصال والتوفيق بين العقل الفلسفي والنقل الديني.</p>
+        </div>
+        <div style="background: rgba(255,255,255,0.05); padding: 1.1rem; border-radius: 12px; border: 1px solid var(--border-subtle);">
+          <h4 style="color: var(--accent-gold); font-size: 1.05rem; margin-bottom: 0.3rem;">مقال عن المنهج</h4>
+          <p style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 0.4rem;">رينيه ديكارت (René Descartes) — 1637م</p>
+          <p style="font-size: 0.88rem; line-height: 1.5; color: var(--text-secondary);">قواعد توجيه العقل، الشك المنهجي، والكوجيطو: أنا أفكر إذن أنا موجود.</p>
+        </div>
+        <div style="background: rgba(255,255,255,0.05); padding: 1.1rem; border-radius: 12px; border: 1px solid var(--border-subtle);">
+          <h4 style="color: var(--accent-gold); font-size: 1.05rem; margin-bottom: 0.3rem;">نقد العقل الخالص</h4>
+          <p style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 0.4rem;">إيمانويل كانط (Immanuel Kant) — 1781م</p>
+          <p style="font-size: 0.88rem; line-height: 1.5; color: var(--text-secondary);">إعادة تأسيس المعرفة البشرية وحدود الإدراك والنقدية الإبستيمولوجية.</p>
+        </div>
+        <div style="background: rgba(255,255,255,0.05); padding: 1.1rem; border-radius: 12px; border: 1px solid var(--border-subtle);">
+          <h4 style="color: var(--accent-gold); font-size: 1.05rem; margin-bottom: 0.3rem;">العقد الاجتماعي</h4>
+          <p style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 0.4rem;">جان جاك روسو (Rousseau) — 1762م</p>
+          <p style="font-size: 0.88rem; line-height: 1.5; color: var(--text-secondary);">أسس مشروعية السلطة السياسية، الإرادة العامة والسيادة الشعبية.</p>
+        </div>
+        <div style="background: rgba(255,255,255,0.05); padding: 1.1rem; border-radius: 12px; border: 1px solid var(--border-subtle);">
+          <h4 style="color: var(--accent-gold); font-size: 1.05rem; margin-bottom: 0.3rem;">الوجود والعدم</h4>
+          <p style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 0.4rem;">جان بول سارتر (Sartre) — 1943م</p>
+          <p style="font-size: 0.88rem; line-height: 1.5; color: var(--text-secondary);">الوجودية كفلسفة إنسانية، أسبقية الوجود على الماهية ومسؤولية الحرية.</p>
+        </div>
+      </div>
+    `;
+    this.openModal(title, bodyHtml);
+  }
+
+  openQuotesModal(e) {
+    if (e) e.preventDefault();
+    const title = "💡 روائع وأشهر الأقوال والحكم الفلسفية الخالدة";
+    const bodyHtml = `
+      <div style="display: flex; flex-direction: column; gap: 1rem; margin-top: 1rem;">
+        <div style="background: rgba(255,255,255,0.05); padding: 1.2rem; border-radius: 12px; border-right: 4px solid var(--accent-gold);">
+          <p style="font-family: var(--font-arabic-calligraphy); font-size: 1.3rem; color: var(--text-primary); margin-bottom: 0.4rem;">« الحياة غير المفحوصة لا تستحق العيش »</p>
+          <span style="font-size: 0.9rem; color: var(--accent-gold); font-weight: bold;">— سقراط</span>
+        </div>
+        <div style="background: rgba(255,255,255,0.05); padding: 1.2rem; border-radius: 12px; border-right: 4px solid var(--accent-gold);">
+          <p style="font-family: var(--font-arabic-calligraphy); font-size: 1.3rem; color: var(--text-primary); margin-bottom: 0.4rem;">« الحق لا يضاد الحق، بل يوافقه ويشهد له »</p>
+          <span style="font-size: 0.9rem; color: var(--accent-gold); font-weight: bold;">— أبو الوليد ابن رشد</span>
+        </div>
+        <div style="background: rgba(255,255,255,0.05); padding: 1.2rem; border-radius: 12px; border-right: 4px solid var(--accent-gold);">
+          <p style="font-family: var(--font-arabic-calligraphy); font-size: 1.3rem; color: var(--text-primary); margin-bottom: 0.4rem;">« أنا أشك، إذن أنا أفكر، إذن أنا موجود »</p>
+          <span style="font-size: 0.9rem; color: var(--accent-gold); font-weight: bold;">— رينيه ديكارت</span>
+        </div>
+        <div style="background: rgba(255,255,255,0.05); padding: 1.2rem; border-radius: 12px; border-right: 4px solid var(--accent-gold);">
+          <p style="font-family: var(--font-arabic-calligraphy); font-size: 1.3rem; color: var(--text-primary); margin-bottom: 0.4rem;">« تصرف بحيث تعامل الإنسانية في شخصك وفي غيرك كغاية لا كمجرد وسيلة »</p>
+          <span style="font-size: 0.9rem; color: var(--accent-gold); font-weight: bold;">— إيمانويل كانط</span>
+        </div>
+        <div style="background: rgba(255,255,255,0.05); padding: 1.2rem; border-radius: 12px; border-right: 4px solid var(--accent-gold);">
+          <p style="font-family: var(--font-arabic-calligraphy); font-size: 1.3rem; color: var(--text-primary); margin-bottom: 0.4rem;">« الإنسان محكوم عليه بأن يكون حراً ومسؤولاً عن العالم »</p>
+          <span style="font-size: 0.9rem; color: var(--accent-gold); font-weight: bold;">— جان بول سارتر</span>
+        </div>
+      </div>
+    `;
+    this.openModal(title, bodyHtml);
+  }
+
+  openYouTube(e) {
+    if (e) e.preventDefault();
+    const ytSection = document.getElementById("youtubeSection");
+    if (ytSection) ytSection.scrollIntoView({ behavior: "smooth" });
+  }
+
+  playPromoVideo() {
+    const title = "▶️ العرض التعريفي لمنصة فضاء الحكمة والمعرفة";
+    const bodyHtml = `
+      <div style="text-align: center; padding: 1rem 0;">
+        <div style="position: relative; padding-bottom: 56.25%; height: 0; overflow: hidden; border-radius: 14px; background: #000; margin-bottom: 1.2rem;">
+          <iframe style="position: absolute; top:0; left: 0; width: 100%; height: 100%; border: none;" src="https://www.youtube-nocookie.com/embed/dQw4w9WgXcQ?autoplay=1" allowfullscreen></iframe>
+        </div>
+        <p style="font-size: 0.95rem; color: var(--text-secondary); margin-bottom: 1rem;">تابع دروس الفلسفة، مناهج التحليل والمناظرات عبر قناتنا الرسمية على يوتيوب.</p>
+        <a href="https://www.youtube.com" target="_blank" rel="noopener" class="btn-download primary" style="display: inline-flex; align-items: center; gap: 0.5rem; text-decoration: none;">
+          <span>زيارة القناة والاشتراك</span>
+          <span>←</span>
+        </a>
+      </div>
+    `;
+    this.openModal(title, bodyHtml);
+  }
+
+  trackEvent(eventName) {
+    console.log("Track event:", eventName);
+  }
+
   showToast(message) {
     let toast = document.getElementById("appToast");
     if (!toast) {
@@ -585,3 +708,4 @@ class AppManager {
 }
 
 window.app = new AppManager();
+
