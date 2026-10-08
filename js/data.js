@@ -647,6 +647,8 @@ const PHILO_DATA = {
       { name: "ذ. سفيان البوعناني", role: "أستاذ متدرب", city: "طنجة", time: "منذ 3 ساعات", status: "offline" }
     ]
   }
+};
+
 // استرجاع الدروس والبيانات المحفوظة محلياً إن وجدت لضمان عدم ضياع التعديلات والإضافات
 try {
   const savedLessons = localStorage.getItem("philo_stored_lessons");
