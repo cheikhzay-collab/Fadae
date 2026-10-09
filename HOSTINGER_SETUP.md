@@ -34,10 +34,10 @@
 افتح الملف `api/config.php` وعدّل الأسطر التالية بالبيانات التي أنشأتها في الخطوة 1:
 
 ```php
-$DB_HOST = 'localhost';               // يترك عادة localhost في Hostinger
-$DB_NAME = 'u123456789_fadae_db';     // اسم القاعدة بالكامل كما يظهر في hPanel
-$DB_USER = 'u123456789_fadae_admin';  // اسم المستخدم بالكامل كما يظهر في hPanel
-$DB_PASS = 'your_strong_password';    // كلمة المرور التي حددتها
+$DB_HOST = 'localhost';               // يترك localhost على خادم Hostinger
+$DB_NAME = 'u663560985_fadae';        // اسم قاعدة البيانات النشطة على Hostinger
+$DB_USER = 'u663560985_fadae';        // اسم مستخدم قاعدة البيانات
+$DB_PASS = 'Fadae#2026!HikmaDb';      // كلمة المرور المعتمدة
 ```
 
 ---

@@ -16,12 +16,31 @@ class AppManager {
     this.setupMobileAppFeatures();
     this.bindEvents();
     this.renderAll();
+    this.loadRemoteLessons();
 
     // استماع لتغيير اللغة
     window.addEventListener("languageChanged", () => {
       this.updateLanguageBadges();
       this.renderAll();
     });
+  }
+
+  async loadRemoteLessons() {
+    try {
+      const res = await fetch("api/lessons.php");
+      if (res.ok) {
+        const json = await res.json();
+        if (json && json.success && Array.isArray(json.data) && json.data.length > 0) {
+          PHILO_DATA.lessons = json.data;
+          this.renderLessons();
+          if (window.adminManager && typeof window.adminManager.renderMetrics === "function") {
+            window.adminManager.renderMetrics();
+          }
+        }
+      }
+    } catch (e) {
+      // وضع بدون إنترنت أو خادم محلي: استخدام البيانات المضمنة تلقائياً
+    }
   }
 
   setupScrollHeader() {

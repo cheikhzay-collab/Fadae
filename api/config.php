@@ -19,9 +19,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
 // (يمكنك تعديل هذه القيم مباشرة أو وضعها في متغيرات البيئة)
 // --------------------------------------------------------------------------
 $DB_HOST = getenv('DB_HOST') ?: 'localhost';
-$DB_NAME = getenv('DB_NAME') ?: 'u123456789_fadae';
-$DB_USER = getenv('DB_USER') ?: 'u123456789_admin';
-$DB_PASS = getenv('DB_PASS') ?: '';
+$DB_NAME = getenv('DB_NAME') ?: 'u663560985_fadae';
+$DB_USER = getenv('DB_USER') ?: 'u663560985_fadae';
+$DB_PASS = getenv('DB_PASS') ?: 'Fadae#2026!HikmaDb';
 
 $DB_CONNECTION_ERROR = null;
 
