@@ -3,16 +3,16 @@
  * يدعم العمل دون إنترنت (Offline Mode) وتخزين الأصول والبيانات المؤقتة (Caching)
  */
 
-const CACHE_NAME = "fadae-alhikma-v3.2";
+const CACHE_NAME = "fadae-alhikma-v3.3";
 
 const ASSETS_TO_CACHE = [
   "./",
   "./index.html",
-  "./css/styles.css?v=3.2",
-  "./js/data.js?v=3.2",
-  "./js/i18n.js?v=3.2",
-  "./js/app.js?v=3.2",
-  "./js/admin.js?v=3.2",
+  "./css/styles.css?v=3.3",
+  "./js/data.js?v=3.3",
+  "./js/i18n.js?v=3.3",
+  "./js/app.js?v=3.3",
+  "./js/admin.js?v=3.3",
   "./manifest.json",
   "./assets/hero_library.jpg",
   "./assets/card_lessons.jpg",
