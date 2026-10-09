@@ -155,11 +155,9 @@ class AdminManager {
     // التبديل بين تبويبات لوحة الإدارة
     const tabs = document.querySelectorAll(".admin-tab-btn");
     tabs.forEach(tab => {
-      tab.addEventListener("click", (e) => {
-        tabs.forEach(t => t.classList.remove("active"));
-        tab.classList.add("active");
-        this.currentAdminTab = tab.dataset.adminTab;
-        this.renderAdminTab();
+      tab.addEventListener("click", () => {
+        const tabName = tab.dataset.adminTab;
+        if (tabName) this.switchTab(tabName);
       });
     });
 
@@ -494,7 +492,7 @@ class AdminManager {
   }
 
   renderSettingsTab(container, lang) {
-    const prof = this.teacherProfile;
+    const prof = this.teacherProfile || {};
 
     container.innerHTML = `
       <div class="teacher-settings-container">
