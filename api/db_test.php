@@ -104,7 +104,25 @@ $pdo = get_db_connection();
         </thead>
         <tbody>
           <?php
-            $tables = ['admins', 'levels', 'modules', 'lessons', 'pedagogy', 'exams', 'philosophers', 'site_stats'];
+            $tables = [
+              'admins',
+              'levels',
+              'modules',
+              'lessons',
+              'pedagogy',
+              'exams',
+              'philosophers',
+              'quizzes',
+              'quiz_results',
+              'mindmaps',
+              'methodologies',
+              'books',
+              'quotes',
+              'teachers',
+              'contact_messages',
+              'admin_logs',
+              'site_stats'
+            ];
             foreach ($tables as $t) {
               try {
                 $count = $pdo->query("SELECT COUNT(*) FROM `{$t}`")->fetchColumn();
