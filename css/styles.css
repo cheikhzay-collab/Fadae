@@ -2811,7 +2811,11 @@ html[dir="ltr"] .btn-login-submit:hover .btn-arrow {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 1.5rem;
+  gap: 1rem;
+  width: 100%;
+  max-width: 1440px;
+  padding: 0 1.25rem;
+  margin: 0 auto;
 }
 
 .exact-brand {
@@ -2830,6 +2834,7 @@ html[dir="ltr"] .btn-login-submit:hover .btn-arrow {
   justify-content: center;
   filter: drop-shadow(0 2px 6px rgba(245, 158, 11, 0.4));
   overflow: hidden;
+  flex-shrink: 0;
 }
 
 .exact-brand-icon svg {
@@ -2841,22 +2846,26 @@ html[dir="ltr"] .btn-login-submit:hover .btn-arrow {
 }
 
 .exact-brand-text {
-  font-size: 1.25rem;
+  font-size: 1.2rem;
   font-weight: 800;
   color: #ffffff;
   letter-spacing: -0.01em;
   font-family: var(--font-arabic);
+  white-space: nowrap;
 }
 
 .exact-nav-links-wrap {
   display: flex;
   align-items: center;
+  flex: 1;
+  justify-content: center;
+  min-width: 0;
 }
 
 .exact-nav-menu {
   display: flex;
   align-items: center;
-  gap: 1.25rem;
+  gap: clamp(0.35rem, 0.9vw, 1.15rem);
   list-style: none;
   margin: 0;
   padding: 0;
@@ -2864,7 +2873,7 @@ html[dir="ltr"] .btn-login-submit:hover .btn-arrow {
 
 .exact-nav-item {
   color: #cbd5e1;
-  font-size: 0.92rem;
+  font-size: clamp(0.8rem, 0.88vw, 0.92rem);
   font-weight: 600;
   text-decoration: none;
   padding: 0.4rem 0.15rem;
@@ -2897,7 +2906,8 @@ html[dir="ltr"] .btn-login-submit:hover .btn-arrow {
 .exact-header-actions {
   display: flex;
   align-items: center;
-  gap: 0.85rem;
+  gap: 0.65rem;
+  flex-shrink: 0;
 }
 
 .exact-nav-search {
@@ -2917,17 +2927,17 @@ html[dir="ltr"] .btn-login-submit:hover .btn-arrow {
   background: rgba(255, 255, 255, 0.07);
   border: 1px solid rgba(255, 255, 255, 0.14);
   border-radius: 999px;
-  padding: 0.38rem 1rem 0.38rem 2.2rem;
+  padding: 0.38rem 0.85rem 0.38rem 2.1rem;
   color: #ffffff;
   font-size: 0.82rem;
   font-family: inherit;
-  width: 190px;
+  width: 150px;
   transition: all var(--transition-fast);
   outline: none;
 }
 
 .exact-nav-search input:focus {
-  width: 240px;
+  width: 200px;
   background: rgba(255, 255, 255, 0.12);
   border-color: #f59e0b;
   box-shadow: 0 0 12px rgba(245, 158, 11, 0.25);
@@ -2951,6 +2961,7 @@ html[dir="ltr"] .btn-login-submit:hover .btn-arrow {
   color: #f59e0b;
   font-size: 1rem;
   transition: all var(--transition-fast);
+  flex-shrink: 0;
 }
 
 .exact-theme-toggle-btn:hover {
@@ -3021,19 +3032,25 @@ html[dir="ltr"] .btn-login-submit:hover .btn-arrow {
 }
 
 .exact-hero-title {
-  font-size: clamp(2.4rem, 5vw, 3.8rem);
+  font-size: clamp(1.75rem, 5vw, 3.8rem);
   font-weight: 900;
   color: #ffffff;
   letter-spacing: -0.02em;
   margin-bottom: 0.5rem;
+  padding: 0 0.5rem;
+  word-break: break-word;
+  overflow-wrap: break-word;
   text-shadow: 0 4px 20px rgba(0, 0, 0, 0.85), 0 0 30px rgba(245, 158, 11, 0.35);
 }
 
 .exact-hero-subtitle {
-  font-size: clamp(1.15rem, 2.2vw, 1.45rem);
+  font-size: clamp(1rem, 2.2vw, 1.45rem);
   color: #e2e8f0;
   font-weight: 500;
   margin-bottom: 1.2rem;
+  padding: 0 0.5rem;
+  word-break: break-word;
+  overflow-wrap: break-word;
   text-shadow: 0 2px 10px rgba(0,0,0,0.6);
 }
 
@@ -3569,7 +3586,34 @@ html[dir="ltr"] .btn-login-submit:hover .btn-arrow {
   font-size: 1.35rem;
 }
 
-/* التجاوب مع مختلف الشاشات (Responsive) */
+/* تنسيق الأقسام البديلة المتناغمة مع الثيمين */
+.section-alt {
+  background: rgba(14, 22, 38, 0.55);
+}
+
+[data-theme="light"] .section-alt {
+  background: #f1f5f9;
+}
+
+[data-theme="light"] .exact-middle-card {
+  background: #1e293b;
+  color: #ffffff;
+}
+
+[data-theme="light"] .exact-perks-bar {
+  background: #1e293b;
+}
+
+/* التجاوب مع مختلف الشاشات (Responsive System) */
+@media (max-width: 1200px) {
+  .exact-nav-links-wrap {
+    display: none;
+  }
+  .hamburger-btn {
+    display: flex;
+  }
+}
+
 @media (max-width: 1100px) {
   .exact-cards-grid {
     grid-template-columns: repeat(3, 1fr);
@@ -3589,12 +3633,6 @@ html[dir="ltr"] .btn-login-submit:hover .btn-arrow {
 }
 
 @media (max-width: 868px) {
-  .exact-nav-links-wrap {
-    display: none;
-  }
-  .hamburger-btn {
-    display: flex;
-  }
   .exact-cards-grid {
     grid-template-columns: repeat(2, 1fr);
   }
@@ -3605,18 +3643,72 @@ html[dir="ltr"] .btn-login-submit:hover .btn-arrow {
 }
 
 @media (max-width: 580px) {
-  .exact-cards-grid {
-    grid-template-columns: 1fr;
+  .exact-header-inner {
+    padding: 0 0.65rem;
+    gap: 0.45rem;
+  }
+  .exact-brand-icon {
+    width: 26px;
+    height: 20px;
+  }
+  .exact-brand-text {
+    font-size: 0.98rem;
+    white-space: nowrap;
+  }
+  .exact-nav-search {
+    position: relative;
   }
   .exact-nav-search input {
-    width: 130px;
+    width: 36px;
+    padding: 0.35rem 0.5rem 0.35rem 1.8rem;
+    font-size: 0.75rem;
+    cursor: pointer;
+    background: rgba(255, 255, 255, 0.1);
+  }
+  .exact-nav-search input::placeholder {
+    color: transparent;
   }
   .exact-nav-search input:focus {
-    width: 160px;
+    width: 125px;
+    cursor: text;
+  }
+  .exact-nav-search input:focus::placeholder {
+    color: #94a3b8;
+  }
+  .exact-header-actions {
+    gap: 0.35rem;
+  }
+  .exact-theme-toggle-btn {
+    width: 34px;
+    height: 34px;
+    font-size: 0.9rem;
+    flex-shrink: 0;
+  }
+  .hamburger-btn {
+    width: 36px;
+    height: 36px;
+    padding: 6px;
+    flex-shrink: 0;
+  }
+  .exact-hero-title {
+    font-size: 1.65rem !important;
+    line-height: 1.3 !important;
+    padding: 0 0.5rem;
+    word-break: break-word;
+  }
+  .exact-hero-subtitle {
+    font-size: 0.92rem;
+    padding: 0 0.5rem;
+    line-height: 1.45;
   }
   .exact-hero-pillars {
+    font-size: 0.9rem;
+    gap: 0.35rem;
     flex-wrap: wrap;
-    gap: 0.5rem;
+    padding: 0 0.5rem;
+  }
+  .exact-cards-grid {
+    grid-template-columns: 1fr;
   }
   .exact-perks-grid {
     grid-template-columns: 1fr;

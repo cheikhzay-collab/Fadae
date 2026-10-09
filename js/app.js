@@ -85,7 +85,7 @@ class AppManager {
   }
 
   setupTheme() {
-    const savedTheme = localStorage.getItem("philo_theme") || "light";
+    const savedTheme = localStorage.getItem("philo_theme") || "dark";
     document.documentElement.setAttribute("data-theme", savedTheme);
     this.updateThemeButton(savedTheme);
     this.updateThemePills(savedTheme);
@@ -113,7 +113,7 @@ class AppManager {
   }
 
   toggleTheme() {
-    const current = document.documentElement.getAttribute("data-theme") || "light";
+    const current = document.documentElement.getAttribute("data-theme") || "dark";
     const next = current === "dark" ? "light" : "dark";
     this.setExactTheme(next);
   }
