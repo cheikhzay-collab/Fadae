@@ -98,7 +98,7 @@ const TRANSLATIONS = {
     admin_tab_pedagogy: "إدارة الجذاذات",
     admin_tab_exams: "إدارة الامتحانات",
     admin_tab_teachers: "الأساتذة والمنخرطون",
-    admin_tab_settings: "إعدادات المنصة",
+    admin_tab_settings: "إعدادات الأستاذ المدير والأمان",
     
     admin_stat_downloads_total: "إجمالي التحميلات",
     admin_stat_monthly_visits: "الزيارات الشهرية",
@@ -243,7 +243,7 @@ const TRANSLATIONS = {
     admin_tab_pedagogy: "Gestion des Fiches",
     admin_tab_exams: "Gestion des Examens",
     admin_tab_teachers: "Professeurs & Membres",
-    admin_tab_settings: "Configuration",
+    admin_tab_settings: "Paramètres Enseignant & Sécurité",
 
     admin_stat_downloads_total: "Téléchargements totaux",
     admin_stat_monthly_visits: "Visites mensuelles",

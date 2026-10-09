@@ -638,10 +638,10 @@
           </div>
         </div>
         <div class="metric-card">
-          <div class="metric-icon-box green">👥</div>
+          <div class="metric-icon-box green">👑</div>
           <div class="metric-data">
-            <h4 id="metricTeachers">1,845</h4>
-            <p data-i18n="stat_teachers">أستاذ مسجل بالمغرب</p>
+            <h4 id="metricTeacherStatus">أستاذ مدير</h4>
+            <p id="metricTeacherLabel">المشرف الحصري على المنصة</p>
           </div>
         </div>
       </div>
@@ -660,8 +660,8 @@
         <button class="admin-tab-btn" data-admin-tab="exams">
           🎓 <span data-i18n="admin_tab_exams">إدارة الامتحانات</span>
         </button>
-        <button class="admin-tab-btn" data-admin-tab="teachers">
-          👥 <span data-i18n="admin_tab_teachers">الأساتذة والمنخرطون</span>
+        <button class="admin-tab-btn" data-admin-tab="settings">
+          ⚙️ <span data-i18n="admin_tab_settings">إعدادات الأستاذ المدير والأمان</span>
         </button>
       </div>
 
@@ -800,9 +800,14 @@
             </div>
           </div>
 
-          <div class="login-credentials-hint">
-            <span class="hint-badge">💡 الحساب المبرمج:</span>
-            <span>المعرف: <code>admin</code> | كلمة المرور: <code>admin2026</code></span>
+          <div class="login-options-row" style="display: flex; justify-content: space-between; align-items: center; margin-top: 0.75rem; flex-wrap: wrap; gap: 0.5rem;">
+            <div class="login-credentials-hint" style="margin: 0;">
+              <span class="hint-badge">💡 الحساب الافتراضي:</span>
+              <span>المعرف: <code>admin</code></span>
+            </div>
+            <button type="button" id="btnOpenForgotModal" class="btn-text-link" style="background: none; border: none; color: var(--accent-emerald); font-size: 0.85rem; font-weight: 700; cursor: pointer; text-decoration: underline; padding: 0.2rem 0.4rem;">
+              📩 نسيت كلمة المرور؟ (عبر Gmail)
+            </button>
           </div>
 
           <div id="adminLoginError" class="login-error-alert" style="display: none;">
@@ -819,6 +824,77 @@
           </button>
         </div>
       </form>
+    </div>
+  </div>
+
+  <!-- ========================================================================
+       مودال استعادة كلمة المرور عبر Gmail (Password Recovery via Gmail)
+       ======================================================================== -->
+  <div class="modal-overlay" id="adminForgotModal">
+    <div class="modal-box modal-box-login">
+      <div class="sheet-drag-handle" aria-hidden="true"></div>
+      <div class="modal-header">
+        <h3 class="modal-title">
+          <span class="login-lock-badge">📩</span>
+          <span>استعادة حساب الأستاذ المدير عبر Gmail</span>
+        </h3>
+        <button class="modal-close-btn" id="closeAdminForgotBtn">✕</button>
+      </div>
+      <div class="modal-body">
+        <div class="admin-login-notice">
+          <div class="notice-icon">🛡️</div>
+          <div class="notice-text">
+            <strong>التحقق الأمني المباشر</strong>
+            <p>سيتم إرسال رمز تحقق سري (OTP) إلى بريد Gmail المسجل للأستاذ المشرف لإعادة تعيين كلمة المرور فوراً.</p>
+          </div>
+        </div>
+
+        <!-- الخطوة 1: طلب الرمز -->
+        <div id="forgotStep1">
+          <div class="form-group">
+            <label class="form-label" for="forgotIdentifier">اسم المستخدم أو البريد الإلكتروني</label>
+            <div class="input-with-icon">
+              <span class="field-icon">👤</span>
+              <input type="text" id="forgotIdentifier" class="form-input" placeholder="admin أو البريد المسجل" value="admin">
+            </div>
+          </div>
+          <button type="button" class="btn-download primary" id="btnSendForgotOtp" style="width: 100%; justify-content: center; margin-top: 0.5rem;">
+            <span>📩 إرسال رمز التحقق إلى بريد Gmail</span>
+          </button>
+        </div>
+
+        <!-- الخطوة 2: إدخال الرمز وتعيين كلمة المرور الجديدة -->
+        <div id="forgotStep2" style="display: none; margin-top: 1rem;">
+          <div style="background: rgba(16, 185, 129, 0.1); border: 1px solid var(--accent-emerald); padding: 0.75rem 1rem; border-radius: var(--radius-sm); margin-bottom: 1rem; font-size: 0.88rem; color: var(--accent-emerald);" id="forgotSuccessInfo">
+            تم إرسال الرمز بنجاح! تفقد بريدك الوارد في Gmail.
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="forgotOtpInput">رمز التحقق (6 أرقام)</label>
+            <div class="input-with-icon">
+              <span class="field-icon">🔢</span>
+              <input type="text" id="forgotOtpInput" class="form-input" placeholder="123456" maxlength="6" style="letter-spacing: 4px; font-weight: 800; font-family: monospace; font-size: 1.1rem; text-align: center;">
+            </div>
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="forgotNewPassword">كلمة المرور الجديدة</label>
+            <div class="input-with-icon password-wrapper">
+              <span class="field-icon">🔑</span>
+              <input type="password" id="forgotNewPassword" class="form-input" placeholder="أدخل كلمة مرور جديدة قوية (6 رموز على الأقل)">
+            </div>
+          </div>
+          <button type="button" class="btn-download primary" id="btnSubmitForgotNewPassword" style="width: 100%; justify-content: center; margin-top: 0.5rem;">
+            <span>✅ تأكيد وتعيين كلمة المرور الجديدة</span>
+          </button>
+        </div>
+
+        <div id="forgotErrorAlert" class="login-error-alert" style="display: none; margin-top: 1rem;">
+          <span>⚠️</span>
+          <span id="forgotErrorText">حدث خطأ</span>
+        </div>
+      </div>
+      <div class="modal-footer login-modal-footer">
+        <button type="button" class="btn-download" id="cancelAdminForgotBtn">إلغاء والعودة</button>
+      </div>
     </div>
   </div>
 

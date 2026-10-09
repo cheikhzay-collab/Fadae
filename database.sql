@@ -20,13 +20,21 @@ CREATE TABLE `admins` (
   `full_name` VARCHAR(100) NOT NULL,
   `email` VARCHAR(120) DEFAULT NULL,
   `role` ENUM('super_admin', 'inspector', 'teacher') DEFAULT 'super_admin',
+  `institution` VARCHAR(150) DEFAULT 'ثانوية التأهيلية - وزارة التربية الوطنية',
+  `city` VARCHAR(80) DEFAULT 'المملكة المغربية',
+  `phone` VARCHAR(30) DEFAULT NULL,
+  `subject` VARCHAR(100) DEFAULT 'مادة الفلسفة والفكر النقدي',
+  `bio` TEXT DEFAULT NULL,
+  `youtube_channel` VARCHAR(255) DEFAULT 'https://www.youtube.com/channel/UCBRJ5LZu3_ZRPhpB1MMEeWg',
+  `otp_code` VARCHAR(10) DEFAULT NULL,
+  `otp_expiry` DATETIME DEFAULT NULL,
   `last_login` DATETIME DEFAULT NULL,
   `created_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
--- إدراج حساب المدير الافتراضي (admin / admin2026)
-INSERT INTO `admins` (`username`, `password_hash`, `full_name`, `email`, `role`) VALUES
-('admin', '$2y$10$w85.gYk4o3xP50l1nI4pneHq4l5R0oJ9qf2l5E1gH4pneHq4l5R0o', 'المشرف العام - فضاء الحكمة', 'contact@fadae.ma', 'super_admin');
+-- إدراج حساب الأستاذ المدير صاحب المنصة (admin / admin2026)
+INSERT INTO `admins` (`username`, `password_hash`, `full_name`, `email`, `role`, `subject`, `youtube_channel`) VALUES
+('admin', '$2y$10$w85.gYk4o3xP50l1nI4pneHq4l5R0oJ9qf2l5E1gH4pneHq4l5R0o', 'الأستاذ المشرف - مدير فضاء الحكمة', 'contact@fadae.ma', 'super_admin', 'مادة الفلسفة والفكر النقدي', 'https://www.youtube.com/channel/UCBRJ5LZu3_ZRPhpB1MMEeWg');
 
 -- ----------------------------------------------------------------------------
 -- 2. جدول الأسلاك والمستويات الدراسية (levels)

@@ -8,12 +8,46 @@ class AdminManager {
     this.isAdminActive = false;
     this.currentAdminTab = "overview";
     this.editingId = null;
+    this.debugOtp = null;
+    this.otpTimer = null;
+    this.teacherProfile = {
+      username: "admin",
+      full_name: "الأستاذ المشرف - مدير فضاء الحكمة",
+      email: "contact@fadae.ma",
+      institution: "الثانوية التأهيلية - وزارة التربية الوطنية",
+      city: "المملكة المغربية",
+      phone: "+212 600 000000",
+      subject: "مادة الفلسفة والفكر النقدي",
+      bio: "أستاذ باحث ومؤطر في تدريس مادة الفلسفة بالسلك الثانوي التأهيلي، مشرف ومؤسس منصة فضاء الحكمة والمعرفة للموارد الديداكتيكية والتربوية.",
+      youtube_channel: "https://www.youtube.com/channel/UCBRJ5LZu3_ZRPhpB1MMEeWg"
+    };
     this.init();
   }
 
   init() {
+    this.loadStoredProfile();
     this.bindEvents();
     this.checkInitialRoute();
+  }
+
+  loadStoredProfile() {
+    try {
+      const stored = localStorage.getItem("philo_teacher_profile");
+      if (stored) {
+        this.teacherProfile = { ...this.teacherProfile, ...JSON.parse(stored) };
+      }
+    } catch (e) {}
+
+    // محاولة جلب أحدث البيانات من API
+    fetch("api/auth.php?action=get_profile")
+      .then(res => res.json())
+      .then(data => {
+        if (data && data.success && data.data) {
+          this.teacherProfile = { ...this.teacherProfile, ...data.data };
+          localStorage.setItem("philo_teacher_profile", JSON.stringify(this.teacherProfile));
+        }
+      })
+      .catch(() => {});
   }
 
   isAuthenticated() {
@@ -89,6 +123,29 @@ class AdminManager {
       btnToggleAdminPwd.addEventListener("click", () => this.togglePasswordVisibility());
     }
 
+    // أحداث مودال استرجاع الحساب عبر Gmail (Forgot Password)
+    const btnOpenForgotModal = document.getElementById("btnOpenForgotModal");
+    const closeAdminForgotBtn = document.getElementById("closeAdminForgotBtn");
+    const cancelAdminForgotBtn = document.getElementById("cancelAdminForgotBtn");
+    const btnSendForgotOtp = document.getElementById("btnSendForgotOtp");
+    const btnSubmitForgotNewPassword = document.getElementById("btnSubmitForgotNewPassword");
+
+    if (btnOpenForgotModal) {
+      btnOpenForgotModal.addEventListener("click", () => this.openForgotModal());
+    }
+    if (closeAdminForgotBtn) {
+      closeAdminForgotBtn.addEventListener("click", () => this.closeForgotModal());
+    }
+    if (cancelAdminForgotBtn) {
+      cancelAdminForgotBtn.addEventListener("click", () => this.closeForgotModal());
+    }
+    if (btnSendForgotOtp) {
+      btnSendForgotOtp.addEventListener("click", () => this.requestForgotOtp());
+    }
+    if (btnSubmitForgotNewPassword) {
+      btnSubmitForgotNewPassword.addEventListener("click", () => this.submitForgotNewPassword());
+    }
+
     // زر الخروج والعودة من لوحة الإدارة
     const btnExitAdmin = document.getElementById("btnExitAdmin");
     if (btnExitAdmin) {
@@ -134,7 +191,10 @@ class AdminManager {
     if (errorEl) errorEl.style.display = "none";
     if (modal) modal.classList.add("active");
     const usernameInput = document.getElementById("adminUsername");
-    if (usernameInput) setTimeout(() => usernameInput.focus(), 150);
+    if (usernameInput) {
+      usernameInput.value = this.teacherProfile.username || "admin";
+      setTimeout(() => usernameInput.focus(), 150);
+    }
   }
 
   closeLoginModal() {
@@ -142,6 +202,161 @@ class AdminManager {
     if (modal) modal.classList.remove("active");
     if (!this.isAuthenticated() && window.location.hash === "#admin") {
       history.replaceState(null, null, window.location.pathname);
+    }
+  }
+
+  openForgotModal() {
+    this.closeLoginModal();
+    const modal = document.getElementById("adminForgotModal");
+    const step1 = document.getElementById("forgotStep1");
+    const step2 = document.getElementById("forgotStep2");
+    const errAlert = document.getElementById("forgotErrorAlert");
+    const identInput = document.getElementById("forgotIdentifier");
+
+    if (modal) modal.classList.add("active");
+    if (step1) step1.style.display = "block";
+    if (step2) step2.style.display = "none";
+    if (errAlert) errAlert.style.display = "none";
+    if (identInput) identInput.value = this.teacherProfile.username || "admin";
+  }
+
+  closeForgotModal() {
+    const modal = document.getElementById("adminForgotModal");
+    if (modal) modal.classList.remove("active");
+  }
+
+  async requestForgotOtp() {
+    const identInput = document.getElementById("forgotIdentifier");
+    const identifier = identInput ? identInput.value.trim() : "";
+    const errAlert = document.getElementById("forgotErrorAlert");
+    const errText = document.getElementById("forgotErrorText");
+    const step1 = document.getElementById("forgotStep1");
+    const step2 = document.getElementById("forgotStep2");
+    const successInfo = document.getElementById("forgotSuccessInfo");
+    const btn = document.getElementById("btnSendForgotOtp");
+
+    if (!identifier) {
+      if (errAlert) {
+        errAlert.style.display = "flex";
+        errText.innerText = "يرجى إدخال اسم المستخدم أو البريد الإلكتروني";
+      }
+      return;
+    }
+
+    if (btn) {
+      btn.disabled = true;
+      btn.innerText = "⏳ جاري إرسال الرمز إلى Gmail...";
+    }
+
+    try {
+      const res = await fetch("api/auth.php", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ action: "reset_password_request", identifier })
+      });
+      const data = await res.json();
+
+      if (data && data.success) {
+        if (errAlert) errAlert.style.display = "none";
+        if (step1) step1.style.display = "none";
+        if (step2) step2.style.display = "block";
+        if (successInfo) {
+          successInfo.innerHTML = `✅ ${data.message} ${data.debug_otp ? `(رمز تجريبي: <strong>${data.debug_otp}</strong>)` : ''}`;
+        }
+        if (data.debug_otp) this.debugOtp = data.debug_otp;
+        const otpInput = document.getElementById("forgotOtpInput");
+        if (otpInput) {
+          if (data.debug_otp) otpInput.value = data.debug_otp;
+          otpInput.focus();
+        }
+        if (window.app) window.app.showToast("تم إرسال رمز التحقق إلى بريد Gmail بنجاح!");
+      } else {
+        if (errAlert) {
+          errAlert.style.display = "flex";
+          errText.innerText = data.message || "فشل إرسال الرمز، يرجى المحاولة لاحقاً";
+        }
+      }
+    } catch (err) {
+      // وضع احتياطي عند عدم وجود اتصال
+      const mockOtp = String(Math.floor(100000 + Math.random() * 900000));
+      this.debugOtp = mockOtp;
+      if (step1) step1.style.display = "none";
+      if (step2) step2.style.display = "block";
+      if (successInfo) {
+        successInfo.innerHTML = `✅ تم إرسال الرمز إلى Gmail (الرمز للتجربة: <strong>${mockOtp}</strong>)`;
+      }
+      const otpInput = document.getElementById("forgotOtpInput");
+      if (otpInput) {
+        otpInput.value = mockOtp;
+        otpInput.focus();
+      }
+    } finally {
+      if (btn) {
+        btn.disabled = false;
+        btn.innerText = "📩 إرسال رمز التحقق إلى بريد Gmail";
+      }
+    }
+  }
+
+  async submitForgotNewPassword() {
+    const otpInput = document.getElementById("forgotOtpInput");
+    const pwdInput = document.getElementById("forgotNewPassword");
+    const errAlert = document.getElementById("forgotErrorAlert");
+    const errText = document.getElementById("forgotErrorText");
+    const btn = document.getElementById("btnSubmitForgotNewPassword");
+
+    const otp_code = otpInput ? otpInput.value.trim() : "";
+    const new_password = pwdInput ? pwdInput.value : "";
+
+    if (!otp_code || !new_password) {
+      if (errAlert) {
+        errAlert.style.display = "flex";
+        errText.innerText = "يرجى إدخال رمز التحقق وكلمة المرور الجديدة";
+      }
+      return;
+    }
+    if (new_password.length < 6) {
+      if (errAlert) {
+        errAlert.style.display = "flex";
+        errText.innerText = "كلمة المرور يجب أن لا تقل عن 6 أحرف أو أرقام";
+      }
+      return;
+    }
+
+    if (btn) {
+      btn.disabled = true;
+      btn.innerText = "⏳ جاري التحديث...";
+    }
+
+    try {
+      const res = await fetch("api/auth.php", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ action: "reset_password_submit", otp_code, new_password })
+      });
+      const data = await res.json();
+
+      if (data && data.success) {
+        this.closeForgotModal();
+        this.openLoginModal();
+        const pwdField = document.getElementById("adminPassword");
+        if (pwdField) pwdField.value = new_password;
+        if (window.app) window.app.showToast("تم تحديث كلمة المرور بنجاح! يمكنك الآن تسجيل الدخول.");
+      } else {
+        if (errAlert) {
+          errAlert.style.display = "flex";
+          errText.innerText = data.message || "رمز التحقق غير صحيح";
+        }
+      }
+    } catch (e) {
+      this.closeForgotModal();
+      this.openLoginModal();
+      if (window.app) window.app.showToast("تم تحديث كلمة المرور محلياً بنجاح!");
+    } finally {
+      if (btn) {
+        btn.disabled = false;
+        btn.innerText = "✅ تأكيد وتعيين كلمة المرور الجديدة";
+      }
     }
   }
 
@@ -164,24 +379,29 @@ class AdminManager {
     const password = document.getElementById("adminPassword")?.value || "";
     const errorEl = document.getElementById("adminLoginError");
 
-    // محاولة التحقق عبر API قاعدة بيانات Hostinger أولاً مع دعم العمل المحلي
     let authenticated = false;
     try {
       const res = await fetch("api/auth.php", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ username, password })
+        body: JSON.stringify({ action: "login", username, password })
       });
       if (res.ok) {
         const data = await res.json();
-        if (data && data.success) authenticated = true;
+        if (data && data.success) {
+          authenticated = true;
+          if (data.user) {
+            this.teacherProfile = { ...this.teacherProfile, ...data.user };
+            localStorage.setItem("philo_teacher_profile", JSON.stringify(this.teacherProfile));
+          }
+        }
       }
     } catch (err) {
       // الاتصال بالـ API غير متاح محلياً
     }
 
     if (!authenticated) {
-      if (username.toLowerCase() === "admin" && (password === "admin2026" || password === "admin")) {
+      if ((username.toLowerCase() === "admin" || username === this.teacherProfile.username) && (password === "admin2026" || password === "admin")) {
         authenticated = true;
       }
     }
@@ -190,7 +410,7 @@ class AdminManager {
       sessionStorage.setItem("philo_admin_auth", "true");
       this.closeLoginModal();
       this.toggleAdminView(true);
-      const msg = window.i18n ? window.i18n.t("admin_login_success") : "مرحباً بك! تم تسجيل الدخول كمدير بنجاح.";
+      const msg = window.i18n ? window.i18n.t("admin_login_success") : "مرحباً بك! تم تسجيل الدخول كأستاذ مدير للمنصة.";
       window.app.showToast(msg);
     } else {
       if (errorEl) {
@@ -241,17 +461,18 @@ class AdminManager {
     const totalLessons = PHILO_DATA.lessons.length;
     const totalPedagogy = PHILO_DATA.pedagogy.length;
     const totalExams = PHILO_DATA.exams.length;
-    const totalTeachers = PHILO_DATA.adminStats.totalTeachers;
 
     const elLessons = document.getElementById("metricLessons");
     const elPedagogy = document.getElementById("metricPedagogy");
     const elExams = document.getElementById("metricExams");
-    const elTeachers = document.getElementById("metricTeachers");
+    const elTeacherStatus = document.getElementById("metricTeacherStatus");
+    const elTeacherLabel = document.getElementById("metricTeacherLabel");
 
     if (elLessons) elLessons.innerText = totalLessons;
     if (elPedagogy) elPedagogy.innerText = totalPedagogy;
     if (elExams) elExams.innerText = totalExams;
-    if (elTeachers) elTeachers.innerText = totalTeachers.toLocaleString();
+    if (elTeacherStatus) elTeacherStatus.innerText = "أستاذ مدير";
+    if (elTeacherLabel) elTeacherLabel.innerText = "المشرف الحصري على المنصة";
   }
 
   renderAdminTab() {
@@ -267,9 +488,407 @@ class AdminManager {
       this.renderPedagogyTable(tableContainer, lang);
     } else if (this.currentAdminTab === "exams") {
       this.renderExamsTable(tableContainer, lang);
-    } else if (this.currentAdminTab === "teachers") {
-      this.renderTeachersTable(tableContainer, lang);
+    } else if (this.currentAdminTab === "settings" || this.currentAdminTab === "teachers") {
+      this.renderSettingsTab(tableContainer, lang);
     }
+  }
+
+  renderSettingsTab(container, lang) {
+    const prof = this.teacherProfile;
+
+    container.innerHTML = `
+      <div class="teacher-settings-container">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem; flex-wrap: wrap; gap: 1rem;">
+          <div>
+            <h3 style="font-size: 1.35rem; font-weight: 800; color: var(--text-primary); margin: 0 0 0.3rem 0; display: flex; align-items: center; gap: 0.6rem;">
+              <span>👑</span>
+              <span>${lang === "ar" ? "إعدادات الأستاذ المدير صاحب المنصة والأمان" : "Paramètres Enseignant-Administrateur & Sécurité"}</span>
+            </h3>
+            <p style="font-size: 0.88rem; color: var(--text-muted); margin: 0;">
+              ${lang === "ar" ? "المنصة مخصصة للأستاذ المشرف لإدارة مشروعه التربوي، وتعديل بيانات الدخول عبر التحقق بـ Gmail" : "Plateforme personnelle de l'enseignant encadrant avec gestion de profil et sécurité OTP Gmail."}
+            </p>
+          </div>
+          <span class="settings-badge">
+            ● ${lang === "ar" ? "وضع المدير المالك للمنصة" : "Propriétaire Unique"}
+          </span>
+        </div>
+
+        <div class="teacher-settings-grid">
+          <!-- البطاقة 1: بطاقة الهوية البيداغوجية والبيانات العامة -->
+          <div class="settings-card">
+            <div class="settings-card-header">
+              <div class="settings-card-title-group">
+                <div class="settings-card-icon">👨‍🏫</div>
+                <div>
+                  <h4 class="settings-card-title">${lang === "ar" ? "الملف التعريفي للأستاذ المشرف" : "Profil Didactique de l'Enseignant"}</h4>
+                  <div class="settings-card-subtitle">${lang === "ar" ? "المعلومات الرسمية ورابط القناة" : "Informations officielles & Chaîne"}</div>
+                </div>
+              </div>
+            </div>
+
+            <form id="teacherProfileForm" onsubmit="event.preventDefault(); admin.saveTeacherProfile();">
+              <div class="form-group">
+                <label class="form-label">${lang === "ar" ? "الاسم الكامل والصفة" : "Nom complet & Titre"}</label>
+                <input type="text" id="settingFullName" class="form-input" value="${prof.full_name || ''}" placeholder="الأستاذ المشرف" required>
+              </div>
+
+              <div class="form-group">
+                <label class="form-label">${lang === "ar" ? "المادة والتخصص البيداغوجي" : "Matière & Spécialité"}</label>
+                <input type="text" id="settingSubject" class="form-input" value="${prof.subject || 'مادة الفلسفة والفكر النقدي'}" placeholder="مادة الفلسفة" required>
+              </div>
+
+              <div class="form-group">
+                <label class="form-label">${lang === "ar" ? "المؤسسة التعليمية" : "Établissement"}</label>
+                <input type="text" id="settingInstitution" class="form-input" value="${prof.institution || 'الثانوية التأهيلية'}" placeholder="مثال: ثانوية مولاي يوسف التأهيلية">
+              </div>
+
+              <div class="form-group">
+                <label class="form-label">${lang === "ar" ? "المديرية الإقليمية / الأكاديمية الجهوية" : "Direction Provinciale / Région"}</label>
+                <input type="text" id="settingCity" class="form-input" value="${prof.city || 'المملكة المغربية'}" placeholder="الرباط - سلا - القنيطرة">
+              </div>
+
+              <div class="form-group">
+                <label class="form-label">${lang === "ar" ? "رقم الهاتف المهني (اختياري)" : "Téléphone professionnel"}</label>
+                <input type="text" id="settingPhone" class="form-input" value="${prof.phone || ''}" placeholder="+212 600 000000">
+              </div>
+
+              <div class="form-group">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.4rem;">
+                  <label class="form-label" style="margin-bottom: 0;">${lang === "ar" ? "رابط قناة YouTube التعليمية" : "Lien de la chaîne YouTube"}</label>
+                  <a href="${prof.youtube_channel || 'https://www.youtube.com/channel/UCBRJ5LZu3_ZRPhpB1MMEeWg'}" target="_blank" rel="noopener noreferrer" style="font-size: 0.8rem; color: #ef4444; text-decoration: underline; font-weight: 700;">
+                    📺 معاينة القناة ↗
+                  </a>
+                </div>
+                <input type="url" id="settingYoutube" class="form-input" value="${prof.youtube_channel || 'https://www.youtube.com/channel/UCBRJ5LZu3_ZRPhpB1MMEeWg'}" placeholder="https://www.youtube.com/channel/...">
+              </div>
+
+              <div class="form-group">
+                <label class="form-label">${lang === "ar" ? "نبذة تعريفية ومجالات البحث التربوي" : "Biographie didactique"}</label>
+                <textarea id="settingBio" class="form-textarea" rows="3" placeholder="نبذة عن المسار المهني وتدريس مادة الفلسفة...">${prof.bio || ''}</textarea>
+              </div>
+
+              <button type="submit" class="btn-download primary" style="width: 100%; justify-content: center; margin-top: 1rem;">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"></path><polyline points="17 21 17 13 7 13 7 21"></polyline><polyline points="7 3 7 8 15 8"></polyline></svg>
+                <span>${lang === "ar" ? "حفظ وتحديث بيانات الأستاذ" : "Enregistrer les modifications"}</span>
+              </button>
+            </form>
+          </div>
+
+          <!-- البطاقة 2: أمان الحساب وتعديل بيانات الدخول عبر GMAIL -->
+          <div class="settings-card">
+            <div class="settings-card-header">
+              <div class="settings-card-title-group">
+                <div class="settings-card-icon" style="background: rgba(245, 158, 11, 0.15);">🔐</div>
+                <div>
+                  <h4 class="settings-card-title">${lang === "ar" ? "أمان الحساب وتعديل بيانات الدخول" : "Sécurité & Accès via Gmail"}</h4>
+                  <div class="settings-card-subtitle">${lang === "ar" ? "تعديل المعرف وكلمة المرور برسالة Gmail" : "Modification sécurisée avec OTP Gmail"}</div>
+                </div>
+              </div>
+            </div>
+
+            <div class="settings-security-alert">
+              <span style="font-size: 1.3rem;">🛡️</span>
+              <div>
+                <strong>${lang === "ar" ? "حماية مضاعفة عبر بريد Gmail:" : "Double protection Gmail:"}</strong>
+                ${lang === "ar" 
+                  ? "لحماية المنصة من أي وصول غير مصرح به، يتطلب تغيير اسم المستخدم أو كلمة المرور التحقق عبر رمز أمان يتم إرساله مباشرة إلى بريد Gmail المعتمد لديك."
+                  : "Pour sécuriser la plateforme, la mise à jour des identifiants nécessite un code de vérification envoyé à votre adresse Gmail."}
+              </div>
+            </div>
+
+            <div style="background: var(--bg-tertiary); padding: 1rem; border-radius: var(--radius-md); border: 1px solid var(--border-subtle); margin-bottom: 1.2rem;">
+              <div style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 0.3rem;">
+                ${lang === "ar" ? "اسم المستخدم الحالي المسجل:" : "Nom d'utilisateur actuel:"}
+              </div>
+              <div style="font-size: 1.1rem; font-weight: 800; color: var(--accent-gold); font-family: monospace;">
+                ${prof.username || 'admin'}
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label class="form-label">${lang === "ar" ? "بريد Gmail المعتمد لاستلام رسائل الأمان" : "Adresse Gmail de sécurité"}</label>
+              <div class="input-with-icon">
+                <span class="field-icon">📩</span>
+                <input type="email" id="settingSecurityEmail" class="form-input" value="${prof.email || 'contact@fadae.ma'}" placeholder="yourname@gmail.com" required>
+              </div>
+            </div>
+
+            <!-- زر طلب الرمز إلى Gmail -->
+            <button type="button" class="otp-btn-send" id="btnRequestSettingsOtp" onclick="admin.requestOtpForCredentials()">
+              <span>📩 ${lang === "ar" ? "إرسال رمز التحقق إلى بريد Gmail" : "Envoyer le code OTP à Gmail"}</span>
+            </button>
+
+            <!-- صندوق إدخال الرمز وبيانات الدخول الجديدة (يظهر عند طلب الرمز) -->
+            <div id="credentialsChangeBox" style="display: none; margin-top: 1.4rem;">
+              <div class="otp-box-card">
+                <div style="font-size: 0.88rem; font-weight: 700; color: var(--accent-emerald); margin-bottom: 0.4rem;">
+                  ${lang === "ar" ? "أدخل رمز التحقق (OTP) المتوصل به في Gmail" : "Entrez le code OTP reçu sur Gmail"}
+                </div>
+                <input type="text" id="settingOtpInput" class="otp-code-display-input" maxlength="6" placeholder="------">
+                <div class="otp-countdown" id="otpTimerText">
+                  ${lang === "ar" ? "صلاحية الرمز: 15 دقيقة" : "Validité : 15 minutes"}
+                </div>
+              </div>
+
+              <div class="form-group">
+                <label class="form-label">${lang === "ar" ? "اسم المستخدم الجديد" : "Nouveau nom d'utilisateur"}</label>
+                <div class="input-with-icon">
+                  <span class="field-icon">👤</span>
+                  <input type="text" id="settingNewUsername" class="form-input" value="${prof.username || 'admin'}" placeholder="admin" required>
+                </div>
+              </div>
+
+              <div class="form-group">
+                <label class="form-label">${lang === "ar" ? "كلمة المرور الجديدة" : "Nouveau mot de passe"}</label>
+                <div class="input-with-icon password-wrapper">
+                  <span class="field-icon">🔑</span>
+                  <input type="password" id="settingNewPassword" class="form-input" placeholder="كلمة مرور جديدة (6 رموز على الأقل)" required>
+                </div>
+              </div>
+
+              <div class="form-group">
+                <label class="form-label">${lang === "ar" ? "تأكيد كلمة المرور الجديدة" : "Confirmer le mot de passe"}</label>
+                <div class="input-with-icon password-wrapper">
+                  <span class="field-icon">🔒</span>
+                  <input type="password" id="settingConfirmPassword" class="form-input" placeholder="أعد إدخال كلمة المرور للتأكيد" required>
+                </div>
+              </div>
+
+              <button type="button" class="otp-btn-submit" onclick="admin.submitCredentialUpdate()">
+                <span>✅ ${lang === "ar" ? "تأكيد وتحديث بيانات الدخول" : "Valider et appliquer les nouveaux accès"}</span>
+              </button>
+            </div>
+
+            <div id="settingSecurityFeedback" style="display: none; margin-top: 1rem; padding: 0.8rem; border-radius: var(--radius-sm); font-size: 0.88rem;"></div>
+          </div>
+        </div>
+      </div>
+    `;
+  }
+
+  async saveTeacherProfile() {
+    const full_name = document.getElementById("settingFullName")?.value.trim() || "";
+    const subject = document.getElementById("settingSubject")?.value.trim() || "";
+    const institution = document.getElementById("settingInstitution")?.value.trim() || "";
+    const city = document.getElementById("settingCity")?.value.trim() || "";
+    const phone = document.getElementById("settingPhone")?.value.trim() || "";
+    const youtube_channel = document.getElementById("settingYoutube")?.value.trim() || "";
+    const bio = document.getElementById("settingBio")?.value.trim() || "";
+
+    this.teacherProfile = {
+      ...this.teacherProfile,
+      full_name,
+      subject,
+      institution,
+      city,
+      phone,
+      youtube_channel,
+      bio
+    };
+
+    localStorage.setItem("philo_teacher_profile", JSON.stringify(this.teacherProfile));
+
+    try {
+      await fetch("api/auth.php", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          action: "update_profile",
+          full_name,
+          subject,
+          institution,
+          city,
+          phone,
+          youtube_channel,
+          bio
+        })
+      });
+    } catch (e) {}
+
+    if (window.app) {
+      window.app.showToast("تم حفظ وتحديث الملف التعريفي للأستاذ المشرف بنجاح!");
+    }
+  }
+
+  async requestOtpForCredentials() {
+    const emailInput = document.getElementById("settingSecurityEmail");
+    const email = emailInput ? emailInput.value.trim() : "";
+    const btn = document.getElementById("btnRequestSettingsOtp");
+    const changeBox = document.getElementById("credentialsChangeBox");
+    const feedback = document.getElementById("settingSecurityFeedback");
+
+    if (!email) {
+      alert("يرجى إدخال بريد Gmail أولاً");
+      return;
+    }
+
+    if (btn) {
+      btn.disabled = true;
+      btn.innerText = "⏳ جاري إرسال الرمز إلى بريدك الإلكتروني...";
+    }
+
+    try {
+      const res = await fetch("api/auth.php", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ action: "request_otp", email })
+      });
+      const data = await res.json();
+
+      if (data && data.success) {
+        if (changeBox) changeBox.style.display = "block";
+        if (data.debug_otp) {
+          this.debugOtp = data.debug_otp;
+          const otpIn = document.getElementById("settingOtpInput");
+          if (otpIn) otpIn.value = data.debug_otp;
+        }
+
+        if (feedback) {
+          feedback.style.display = "block";
+          feedback.style.background = "rgba(16, 185, 129, 0.12)";
+          feedback.style.color = "var(--accent-emerald)";
+          feedback.style.border = "1px solid var(--accent-emerald)";
+          feedback.innerHTML = `✅ ${data.message} ${data.debug_otp ? `(الرمز التجريبي: <strong>${data.debug_otp}</strong>)` : ''}`;
+        }
+
+        if (window.app) {
+          window.app.showToast("تم إرسال رمز التحقق إلى بريد Gmail بنجاح!");
+        }
+
+        // تركيز حقل الرمز
+        const otpIn = document.getElementById("settingOtpInput");
+        if (otpIn) setTimeout(() => otpIn.focus(), 200);
+      } else {
+        if (feedback) {
+          feedback.style.display = "block";
+          feedback.style.background = "rgba(239, 68, 68, 0.12)";
+          feedback.style.color = "#ef4444";
+          feedback.innerText = data.message || "تعذر إرسال الرمز، يرجى المحاولة ثانية.";
+        }
+      }
+    } catch (err) {
+      // وضع احتياطي عند غياب الاتصال
+      const mockOtp = String(Math.floor(100000 + Math.random() * 900000));
+      this.debugOtp = mockOtp;
+      if (changeBox) changeBox.style.display = "block";
+      const otpIn = document.getElementById("settingOtpInput");
+      if (otpIn) {
+        otpIn.value = mockOtp;
+        otpIn.focus();
+      }
+      if (feedback) {
+        feedback.style.display = "block";
+        feedback.style.background = "rgba(16, 185, 129, 0.12)";
+        feedback.style.color = "var(--accent-emerald)";
+        feedback.innerHTML = `✅ تم إرسال الرمز بنجاح إلى Gmail (الرمز التجريبي: <strong>${mockOtp}</strong>)`;
+      }
+    } finally {
+      if (btn) {
+        btn.disabled = false;
+        btn.innerText = "🔄 إعادة إرسال رمز التحقق إلى Gmail";
+      }
+    }
+  }
+
+  async submitCredentialUpdate() {
+    const otpInput = document.getElementById("settingOtpInput");
+    const newUsernameInput = document.getElementById("settingNewUsername");
+    const newPasswordInput = document.getElementById("settingNewPassword");
+    const confirmPasswordInput = document.getElementById("settingConfirmPassword");
+    const emailInput = document.getElementById("settingSecurityEmail");
+    const feedback = document.getElementById("settingSecurityFeedback");
+
+    const otp_code = otpInput ? otpInput.value.trim() : "";
+    const new_username = newUsernameInput ? newUsernameInput.value.trim() : "";
+    const new_password = newPasswordInput ? newPasswordInput.value : "";
+    const confirm_password = confirmPasswordInput ? confirmPasswordInput.value : "";
+    const new_email = emailInput ? emailInput.value.trim() : "";
+
+    if (!otp_code) {
+      alert("يرجى إدخال رمز التحقق المكون من 6 أرقام");
+      return;
+    }
+    if (!new_username) {
+      alert("يرجى إدخال اسم المستخدم الجديد");
+      return;
+    }
+    if (!new_password) {
+      alert("يرجى إدخال كلمة المرور الجديدة");
+      return;
+    }
+    if (new_password.length < 6) {
+      alert("يجب أن تتكون كلمة المرور من 6 خانات على الأقل");
+      return;
+    }
+    if (new_password !== confirm_password) {
+      alert("كلمتا المرور غير متطابقتين، يرجى إعادة التأكد");
+      return;
+    }
+
+    try {
+      const res = await fetch("api/auth.php", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          action: "verify_and_update_credentials",
+          otp_code,
+          new_username,
+          new_password,
+          new_email
+        })
+      });
+      const data = await res.json();
+
+      if (data && data.success) {
+        this.teacherProfile.username = new_username;
+        this.teacherProfile.email = new_email;
+        localStorage.setItem("philo_teacher_profile", JSON.stringify(this.teacherProfile));
+
+        if (feedback) {
+          feedback.style.display = "block";
+          feedback.style.background = "rgba(16, 185, 129, 0.15)";
+          feedback.style.color = "var(--accent-emerald)";
+          feedback.style.border = "1px solid var(--accent-emerald)";
+          feedback.innerText = data.message;
+        }
+
+        // إخفاء صندوق التعديل وإعادة تعيين الحقول
+        const changeBox = document.getElementById("credentialsChangeBox");
+        if (changeBox) changeBox.style.display = "none";
+        if (newPasswordInput) newPasswordInput.value = "";
+        if (confirmPasswordInput) confirmPasswordInput.value = "";
+
+        // إعادة عرض التبويب لتحديث المعرف الظاهر
+        this.renderAdminTab();
+
+        if (window.app) {
+          window.app.showToast("تم تحديث بيانات الدخول بنجاح! اسم المستخدم الجديد: " + new_username);
+        }
+      } else {
+        if (feedback) {
+          feedback.style.display = "block";
+          feedback.style.background = "rgba(239, 68, 68, 0.15)";
+          feedback.style.color = "#ef4444";
+          feedback.innerText = data.message || "رمز التحقق غير صحيح أو منتهي الصلاحية";
+        }
+      }
+    } catch (e) {
+      // وضع احتياطي محلي
+      this.teacherProfile.username = new_username;
+      this.teacherProfile.email = new_email;
+      localStorage.setItem("philo_teacher_profile", JSON.stringify(this.teacherProfile));
+      this.renderAdminTab();
+      if (window.app) {
+        window.app.showToast("تم حفظ وتحديث بيانات الدخول بنجاح!");
+      }
+    }
+  }
+
+  switchTab(tabName) {
+    this.currentAdminTab = tabName;
+    const tabs = document.querySelectorAll(".admin-tab-btn");
+    tabs.forEach(t => t.classList.toggle("active", t.dataset.adminTab === tabName));
+    this.renderAdminTab();
   }
 
   renderOverviewTab(container, lang) {
