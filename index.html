@@ -22,7 +22,7 @@
   <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><circle cx='50' cy='50' r='48' fill='%237c3aed'/><polygon points='50,15 62,38 88,40 68,58 74,84 50,70 26,84 32,58 12,40 38,38' fill='%23f59e0b'/><circle cx='50' cy='50' r='14' fill='%230b0f19'/></svg>">
 
   <!-- ورقة الأنماط الشاملة -->
-  <link rel="stylesheet" href="css/styles.css?v=2.8">
+  <link rel="stylesheet" href="css/styles.css?v=2.9">
 </head>
 <body class="rtl">
 
@@ -70,6 +70,11 @@
           </svg>
           <input type="text" id="exactSearchInput" placeholder="ابحث عن درس، فيلسوف، كتاب..." aria-label="بحث سريع">
         </div>
+
+        <!-- زر تغيير اللغة السريع للحاسوب -->
+        <button class="exact-theme-toggle-btn" id="btnDesktopLang" title="Français / العربية" aria-label="تغيير اللغة" style="font-size: 0.85rem; font-weight: bold; width: auto; padding: 0 0.75rem; border-radius: 999px;">
+          <span>🌐 FR / ع</span>
+        </button>
 
         <!-- زر المظهر السريع (الشمس / القمر) -->
         <button class="exact-theme-toggle-btn" id="btnThemeToggle" title="تبديل الثيم">
@@ -171,13 +176,13 @@
 
         <!-- ركائز الفلسفة الأربع -->
         <div class="exact-hero-pillars">
-          <span class="pillar-word">اكتشف</span>
+          <a href="#levels" class="pillar-word pillar-link" onclick="document.getElementById('levels').scrollIntoView({behavior:'smooth'})">اكتشف</a>
           <span class="pillar-dot">•</span>
-          <span class="pillar-word">تعلّم</span>
+          <a href="#lessons" class="pillar-word pillar-link" onclick="document.getElementById('lessons').scrollIntoView({behavior:'smooth'})">تعلّم</a>
           <span class="pillar-dot">•</span>
-          <span class="pillar-word">ناقش</span>
+          <a href="#methodology" class="pillar-word pillar-link" onclick="document.getElementById('methodology').scrollIntoView({behavior:'smooth'})">ناقش</a>
           <span class="pillar-dot">•</span>
-          <span class="pillar-word">فكّر</span>
+          <a href="#philosophers" class="pillar-word pillar-link" onclick="document.getElementById('philosophers').scrollIntoView({behavior:'smooth'})">فكّر</a>
         </div>
       </div>
 
@@ -206,7 +211,7 @@
         <div class="exact-cards-grid">
           
           <!-- البطاقة 1: دروس الفلسفة (أقصى اليسار بالصورة) -->
-          <div class="exact-card">
+          <div class="exact-card" onclick="document.getElementById('lessons').scrollIntoView({behavior:'smooth'})" style="cursor: pointer;" title="تصفح دروس ومناهج الفلسفة">
             <div class="card-thumb-wrap">
               <img src="assets/card_lessons.jpg" alt="دروس الفلسفة" class="card-thumb-img" loading="lazy">
               <div class="card-badge-circle gold-border">
@@ -223,7 +228,7 @@
           </div>
 
           <!-- البطاقة 2: الفلاسفة -->
-          <div class="exact-card">
+          <div class="exact-card" onclick="document.getElementById('philosophers').scrollIntoView({behavior:'smooth'})" style="cursor: pointer;" title="استكشاف أعلام الفلسفة">
             <div class="card-thumb-wrap">
               <img src="assets/card_philosophers.jpg" alt="الفلاسفة" class="card-thumb-img" loading="lazy">
               <div class="card-badge-circle dark-border">
@@ -240,7 +245,7 @@
           </div>
 
           <!-- البطاقة 3: أشهر الكتب -->
-          <div class="exact-card">
+          <div class="exact-card" onclick="app.openBooksModal(event)" style="cursor: pointer;" title="تصفح أشهر أمهات الكتب الفلسفية">
             <div class="card-thumb-wrap">
               <img src="assets/card_books.jpg" alt="أشهر الكتب" class="card-thumb-img" loading="lazy">
               <div class="card-badge-circle gold-border">
@@ -257,7 +262,7 @@
           </div>
 
           <!-- البطاقة 4: أشهر الأقوال -->
-          <div class="exact-card">
+          <div class="exact-card" onclick="app.openQuotesModal(event)" style="cursor: pointer;" title="تصفح روائع الأقوال والحكم الفلسفية">
             <div class="card-thumb-wrap">
               <img src="assets/card_quotes.jpg" alt="أشهر الأقوال" class="card-thumb-img" loading="lazy">
               <div class="card-badge-circle dark-border">
@@ -274,7 +279,7 @@
           </div>
 
           <!-- البطاقة 5: قناة فضاء الحكمة (أقصى اليمين بالصورة) -->
-          <div class="exact-card">
+          <div class="exact-card" onclick="app.openYouTube(event)" style="cursor: pointer;" title="مشاهدة قناة فضاء الحكمة على يوتيوب">
             <div class="card-thumb-wrap">
               <img src="assets/card_youtube.jpg" alt="قناة فضاء الحكمة" class="card-thumb-img" loading="lazy">
               <div class="card-badge-circle red-border">
@@ -381,19 +386,19 @@
       <!-- الشريط السفلي للمزايا الأربع -->
       <div class="exact-perks-bar">
         <div class="container exact-perks-grid">
-          <div class="perk-item">
+          <div class="perk-item" onclick="document.getElementById('lessons').scrollIntoView({behavior:'smooth'})" style="cursor: pointer;" title="انتقل إلى المتن المعرفي والدروس">
             <span class="perk-icon">🎓</span>
             <span class="perk-label">تعليم مبسط</span>
           </div>
-          <div class="perk-item">
+          <div class="perk-item" onclick="document.querySelector('.device-mockup-wrapper').scrollIntoView({behavior:'smooth'})" style="cursor: pointer;" title="معاينة التوافق الكامل مع مختلف الشاشات">
             <span class="perk-icon">📱</span>
             <span class="perk-label">متجاوب مع جميع الأجهزة</span>
           </div>
-          <div class="perk-item">
+          <div class="perk-item" onclick="app.toggleTheme()" style="cursor: pointer;" title="تبديل مظهر الموقع (نهاري / ليلي)">
             <span class="perk-icon">🛡️</span>
             <span class="perk-label">تصميم عصري وأنيق</span>
           </div>
-          <div class="perk-item">
+          <div class="perk-item" onclick="document.getElementById('exams').scrollIntoView({behavior:'smooth'})" style="cursor: pointer;" title="انتقل إلى بنك الامتحانات الوطنية">
             <span class="perk-icon">⚡</span>
             <span class="perk-label">أداء سريع</span>
           </div>
@@ -820,8 +825,8 @@
         <h4 class="footer-heading" data-i18n="footer_official_links">مصادر وبوابات رسمية</h4>
         <ul class="footer-links-list">
           <li class="footer-link-item"><a href="https://www.men.gov.ma" target="_blank" rel="noopener" data-i18n="footer_link_men">وزارة التربية الوطنية المغربية</a></li>
-          <li class="footer-link-item"><a href="#" data-i18n="footer_link_cne">المركز الوطني للتقويم والامتحانات</a></li>
-          <li class="footer-link-item"><a href="#" data-i18n="footer_link_orientation">بوابة التوجيه والمناهج</a></li>
+          <li class="footer-link-item"><a href="#exams" onclick="document.getElementById('exams').scrollIntoView({behavior:'smooth'})" data-i18n="footer_link_cne">المركز الوطني للتقويم والامتحانات</a></li>
+          <li class="footer-link-item"><a href="https://massarservice.men.gov.ma" target="_blank" rel="noopener" data-i18n="footer_link_orientation">بوابة التوجيه والمناهج</a></li>
         </ul>
       </div>
     </div>
@@ -839,9 +844,9 @@
   </footer>
 
   <!-- استدعاء البرمجيات التفاعلية بالتسلسل الصحيح -->
-  <script src="js/data.js?v=2.8"></script>
-  <script src="js/i18n.js?v=2.8"></script>
-  <script src="js/app.js?v=2.8"></script>
-  <script src="js/admin.js?v=2.8"></script>
+  <script src="js/data.js?v=2.9"></script>
+  <script src="js/i18n.js?v=2.9"></script>
+  <script src="js/app.js?v=2.9"></script>
+  <script src="js/admin.js?v=2.9"></script>
 </body>
 </html>

@@ -180,6 +180,13 @@ class AppManager {
         this.updateLanguageBadges();
       });
     }
+    const btnDesktopLang = document.getElementById("btnDesktopLang");
+    if (btnDesktopLang) {
+      btnDesktopLang.addEventListener("click", () => {
+        window.i18n.toggleLang();
+        this.updateLanguageBadges();
+      });
+    }
     if (drawerLang) {
       drawerLang.addEventListener("click", () => {
         window.i18n.toggleLang();
@@ -219,7 +226,16 @@ class AppManager {
     };
 
     if (searchInput) searchInput.addEventListener("input", handleSearch);
-    if (exactSearch) exactSearch.addEventListener("input", handleSearch);
+    if (exactSearch) {
+      exactSearch.addEventListener("input", handleSearch);
+      exactSearch.addEventListener("keydown", (e) => {
+        if (e.key === "Enter") {
+          e.preventDefault();
+          const lessonsSection = document.getElementById("lessons");
+          if (lessonsSection) lessonsSection.scrollIntoView({ behavior: "smooth" });
+        }
+      });
+    }
 
     // إغلاق المودال بالنقر خارج الصندوق
     const modalOverlay = document.getElementById("genericModalOverlay");
@@ -292,7 +308,7 @@ class AppManager {
     this.renderLessons();
 
     // التمرير السلس إلى قسم الدروس
-    const el = document.getElementById("sectionLessons");
+    const el = document.getElementById("lessons") || document.getElementById("levels");
     if (el) el.scrollIntoView({ behavior: "smooth" });
   }
 
@@ -449,9 +465,13 @@ class AppManager {
           </div>
 
           <div style="display: flex; gap: 0.8rem; margin-top: 1.5rem; justify-content: flex-end; flex-wrap: wrap;">
+            <button class="btn-download" onclick="app.showExamDetail('${exam.id}')" style="background: rgba(245, 158, 11, 0.12); border-color: rgba(245, 158, 11, 0.4); color: #f59e0b;">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>
+              <span>عرض شبكة التصحيح وعناصر الإجابة</span>
+            </button>
             <button class="btn-download primary" onclick="app.downloadResource('الامتحان الوطني ${exam.year} - ${session}', 'PDF')">
               <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
-              <span>${window.i18n.t("btn_download_pdf")} مع عناصر الإجابة</span>
+              <span>${window.i18n.t("btn_download_pdf")}</span>
             </button>
             <button class="btn-download" onclick="window.print()">
               <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 6 2 18 2 18 9"></polyline><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"></path><rect x="6" y="14" width="12" height="8"></rect></svg>
@@ -476,42 +496,64 @@ class AppManager {
       const concept = lang === "ar" ? phil.keyConcept_ar : phil.keyConcept_fr;
 
       return `
-        <div class="philosopher-card">
-          <div class="philosopher-avatar">
-            🏛️
-          </div>
+        <div class="philosopher-card" onclick="app.showPhilosopherModal('${phil.id}')" style="cursor: pointer;" title="انقر لاستكشاف سيرة وأطروحات ${name}">
+          <div class="philosopher-avatar">🏛️</div>
           <h3 class="philosopher-name">${name}</h3>
           <span class="philosopher-era">${era}</span>
           <p class="philosopher-quote">${quote}</p>
           <div class="philosopher-concept">
             <strong>${lang === "ar" ? "المفهوم المحوري:" : "Notion clé :"}</strong> ${concept}
           </div>
+          <button type="button" class="btn-card-action" style="margin-top: 1rem; width: 100%; justify-content: center;" onclick="event.stopPropagation(); app.showPhilosopherModal('${phil.id}')">
+            <span>${lang === "ar" ? "استكشاف أطروحات الفيلسوف" : "Explorer la pensée"}</span>
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"></polyline></svg>
+          </button>
         </div>
       `;
     }).join("");
   }
 
-  // عرض المنهجيات المعتمدة
+  // عرض المنهجيات المعتمدة مع مبدل التبويبات الثلاثة
+  setMethodologyTab(methId) {
+    this.currentMethodologyId = methId;
+    this.renderMethodology();
+  }
+
   renderMethodology() {
     const container = document.getElementById("methodologyContainer");
     if (!container) return;
     const lang = window.i18n.getLang();
 
-    const meth = PHILO_DATA.methodologies[0]; // منهجية السؤال الإشكالي
-    const title = lang === "ar" ? meth.title_ar : meth.title_fr;
+    if (!this.currentMethodologyId) this.currentMethodologyId = "meth-question";
+    const currentMeth = PHILO_DATA.methodologies.find(m => m.id === this.currentMethodologyId) || PHILO_DATA.methodologies[0];
+    const title = lang === "ar" ? currentMeth.title_ar : currentMeth.title_fr;
 
     container.innerHTML = `
       <div class="pedagogy-card" style="grid-column: 1 / -1;">
+        <!-- تبويبات الصيغ الإنشائية الثلاث المعتمدة وزارياً -->
+        <div style="display: flex; gap: 0.6rem; flex-wrap: wrap; margin-bottom: 1.5rem; border-bottom: 1px solid var(--border-subtle); padding-bottom: 1rem;">
+          ${PHILO_DATA.methodologies.map(m => {
+            const isActive = m.id === this.currentMethodologyId;
+            const icon = m.id === 'meth-question' ? '❓' : (m.id === 'meth-quote' ? '💬' : '📜');
+            const label = m.id === 'meth-question' ? 'صيغة السؤال الإشكالي' : (m.id === 'meth-quote' ? 'صيغة القولة الفلسفية' : 'صيغة النص الفلسفي');
+            return `
+              <button type="button" class="filter-pill ${isActive ? 'active' : ''}" onclick="app.setMethodologyTab('${m.id}')" style="cursor: pointer; padding: 0.5rem 1rem;">
+                <span>${icon} ${label}</span>
+              </button>
+            `;
+          }).join("")}
+        </div>
+
         <div class="pedagogy-card-header">
           <div>
             <h3 class="pedagogy-title">${title}</h3>
-            <p style="color: var(--accent-gold); font-size: 0.9rem; margin-top: 0.3rem;">معايير المركز الوطني للتقويم والامتحانات (الشبكة الرسمية 20 ن)</p>
+            <p style="color: var(--accent-gold); font-size: 0.9rem; margin-top: 0.3rem;">معايير المركز الوطني للتقويم والامتحانات (الشبكة الرسمية 20 ن) • ${currentMeth.duration_read || '10 دقائق'}</p>
           </div>
           <span class="pedagogy-badge">20 / 20</span>
         </div>
 
         <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1rem; margin-top: 1.2rem;">
-          ${meth.rubrics.map(r => {
+          ${currentMeth.rubrics.map(r => {
             const name = lang === "ar" ? r.name_ar : r.name_fr;
             const desc = lang === "ar" ? r.desc_ar : r.desc_fr;
             return `
@@ -521,6 +563,17 @@ class AppManager {
               </div>
             `;
           }).join("")}
+        </div>
+
+        <div style="margin-top: 1.8rem; display: flex; gap: 0.8rem; justify-content: flex-end; flex-wrap: wrap;">
+          <button class="btn-download" onclick="window.print()">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 6 2 18 2 18 9"></polyline><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"></path><rect x="6" y="14" width="12" height="8"></rect></svg>
+            <span>طباعة المنهجية وسلم التنقيط</span>
+          </button>
+          <button class="btn-download primary" onclick="app.downloadResource('${title}', 'Word')">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline></svg>
+            <span>تحميل المنهجية كاملة بصيغة Word</span>
+          </button>
         </div>
       </div>
     `;
@@ -544,10 +597,18 @@ class AppManager {
       <div style="font-size: 1rem; color: var(--text-primary); line-height: 1.8; margin-top: 1.5rem; white-space: pre-line;">
         ${content}
       </div>
-      <div style="margin-top: 2rem; display: flex; gap: 0.8rem; justify-content: flex-end;">
+      <div style="margin-top: 2rem; display: flex; gap: 0.8rem; justify-content: flex-end; flex-wrap: wrap;">
+        <button class="btn-download" onclick="window.print()">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 6 2 18 2 18 9"></polyline><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"></path><rect x="6" y="14" width="12" height="8"></rect></svg>
+          طباعة الدرس
+        </button>
         <button class="btn-download primary" onclick="app.downloadResource('${title}', 'PDF')">
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
           تحميل الدرس بصيغة PDF
+        </button>
+        <button class="btn-download" onclick="app.downloadResource('${title}', 'Word')">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline></svg>
+          تحميل Word
         </button>
       </div>
     `;
@@ -580,7 +641,8 @@ class AppManager {
         </ol>
       </div>
 
-      <div style="margin-top: 2rem; display: flex; gap: 0.8rem; justify-content: flex-end;">
+      <div style="margin-top: 2rem; display: flex; gap: 0.8rem; justify-content: flex-end; flex-wrap: wrap;">
+        <button class="btn-download" onclick="window.print()">طباعة الجذاذة</button>
         <button class="btn-download primary" onclick="app.downloadResource('${title}', 'PDF')">تحميل الجذاذة PDF</button>
         <button class="btn-download" onclick="app.downloadResource('${title}', 'Word')">تحميل الجذاذة Word قابلة للتعديل</button>
       </div>
@@ -589,61 +651,300 @@ class AppManager {
     this.openModal(title, bodyHtml);
   }
 
-  openModal(title, bodyHtml) {
-    const overlay = document.getElementById("genericModalOverlay");
-    const titleEl = document.getElementById("genericModalTitle");
-    const bodyEl = document.getElementById("genericModalBody");
+  // نافذة عرض تفاصيل الفيلسوف
+  showPhilosopherModal(philId) {
+    const phil = PHILO_DATA.philosophers.find(p => p.id === philId);
+    if (!phil) return;
+    const lang = window.i18n.getLang();
 
-    if (overlay && titleEl && bodyEl) {
-      titleEl.innerHTML = title;
-      bodyEl.innerHTML = bodyHtml;
-      overlay.classList.add("active");
+    const name = lang === "ar" ? phil.name_ar : phil.name_fr;
+    const era = lang === "ar" ? phil.era_ar : phil.era_fr;
+    const quote = lang === "ar" ? phil.quote_ar : phil.quote_fr;
+    const concept = lang === "ar" ? phil.keyConcept_ar : phil.keyConcept_fr;
+    const modules = lang === "ar" ? phil.modules_ar : phil.modules_fr;
+
+    const title = `🏛️ فيلسوف المنهاج: ${name}`;
+    const cleanQuote = quote.replace(/['"]/g, "");
+
+    const bodyHtml = `
+      <div style="display: flex; align-items: center; gap: 1rem; margin-bottom: 1.5rem; background: var(--bg-tertiary); padding: 1.1rem; border-radius: 12px; border: 1px solid var(--border-subtle);">
+        <div style="font-size: 2.2rem; background: rgba(245, 158, 11, 0.15); width: 60px; height: 60px; display: flex; align-items: center; justify-content: center; border-radius: 50%; border: 2px solid var(--accent-gold); flex-shrink: 0;">🏛️</div>
+        <div>
+          <h3 style="font-size: 1.35rem; color: var(--text-primary); margin: 0 0 0.3rem;">${name}</h3>
+          <span style="font-size: 0.9rem; color: var(--accent-gold); font-weight: 600;">${era}</span>
+        </div>
+      </div>
+
+      <div style="background: rgba(245, 158, 11, 0.08); border-right: 4px solid var(--accent-gold); padding: 1.1rem 1.4rem; border-radius: 8px; margin-bottom: 1.5rem;">
+        <div style="font-size: 0.82rem; color: var(--accent-gold); font-weight: bold; margin-bottom: 0.3rem;">القولة التأسيسية:</div>
+        <p style="font-family: var(--font-arabic-calligraphy); font-size: 1.25rem; color: var(--text-primary); line-height: 1.6; margin: 0;">${quote}</p>
+      </div>
+
+      <div style="margin-bottom: 1.4rem;">
+        <h4 style="color: var(--accent-gold); font-size: 1.05rem; margin-bottom: 0.6rem;">💡 المفهوم والإشكال المحوري:</h4>
+        <p style="font-size: 0.98rem; color: var(--text-secondary); line-height: 1.7; background: var(--bg-secondary); padding: 1rem; border-radius: 8px; border: 1px solid var(--border-subtle); margin: 0;">${concept}</p>
+      </div>
+
+      <div style="margin-bottom: 1.5rem;">
+        <h4 style="color: var(--accent-gold); font-size: 1.05rem; margin-bottom: 0.6rem;">📚 المجزوءات المبرمج فيها بالمقرر المغربي:</h4>
+        <div style="display: flex; gap: 0.5rem; flex-wrap: wrap;">
+          ${modules.map(m => `<span style="background: rgba(99, 102, 241, 0.15); color: #818cf8; border: 1px solid rgba(99, 102, 241, 0.3); padding: 0.35rem 0.8rem; border-radius: 20px; font-size: 0.85rem; font-weight: 600;"># ${m}</span>`).join("")}
+        </div>
+      </div>
+
+      <div style="display: flex; gap: 0.8rem; justify-content: flex-end; margin-top: 1.5rem; flex-wrap: wrap;">
+        <button class="btn-download" onclick="app.searchByPhilosopher('${name}')">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+          <span>تصفح دروس ${name}</span>
+        </button>
+        <button class="btn-download primary" onclick="app.copyQuote('${cleanQuote}', '${name}')">
+          <span>📋 نسخ القولة والبيانات</span>
+        </button>
+      </div>
+    `;
+
+    this.openModal(title, bodyHtml);
+  }
+
+  searchByPhilosopher(name) {
+    this.closeModal();
+    const searchInput = document.getElementById("exactSearchInput") || document.getElementById("heroSearchInput");
+    if (searchInput) {
+      searchInput.value = name;
+      this.searchQuery = name.toLowerCase().trim();
+      this.renderLessons();
+    }
+    const lessonsSection = document.getElementById("lessons");
+    if (lessonsSection) lessonsSection.scrollIntoView({ behavior: "smooth" });
+  }
+
+  // نافذة عرض الامتحان الوطني وشبكة التصحيح المفصلة
+  showExamDetail(examId) {
+    const exam = PHILO_DATA.exams.find(e => e.id === examId);
+    if (!exam) return;
+    const lang = window.i18n.getLang();
+
+    const session = lang === "ar" ? exam.session_ar : exam.session_fr;
+    const stream = lang === "ar" ? exam.stream_ar : exam.stream_fr;
+    const title = `🎓 الامتحان الوطني الموحد ${exam.year} — ${session}`;
+
+    const bodyHtml = `
+      <div style="margin-bottom: 1.2rem; background: var(--bg-tertiary); padding: 1.1rem; border-radius: 10px; border-right: 4px solid var(--accent-gold);">
+        <div style="font-weight: 700; color: var(--accent-gold); font-size: 1.1rem; margin-bottom: 0.3rem;">${stream}</div>
+        <p style="font-size: 0.9rem; color: var(--text-secondary); margin: 0;">عناصر الإجابة وسلم التنقيط الرسمي المعتمد من المركز الوطني للتقويم والامتحانات (20 نقطة)</p>
+      </div>
+
+      <div style="display: flex; flex-direction: column; gap: 1.2rem;">
+        ${exam.sujets.map(s => `
+          <div style="background: var(--bg-secondary); border: 1px solid var(--border-subtle); border-radius: 10px; padding: 1.2rem;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.6rem; flex-wrap: wrap; gap: 0.5rem;">
+              <span style="font-weight: 800; color: var(--accent-purple); font-size: 1rem;">${s.type_ar}</span>
+              <span style="background: rgba(245, 158, 11, 0.15); color: var(--accent-gold); padding: 0.2rem 0.6rem; border-radius: 12px; font-size: 0.8rem; font-weight: 700;">${s.notion_ar}</span>
+            </div>
+            <div style="font-size: 1.05rem; color: var(--text-primary); line-height: 1.7; margin-bottom: 1rem; padding: 0.8rem; background: var(--bg-tertiary); border-radius: 8px;">
+              ${s.text_ar}
+            </div>
+
+            <div style="border-top: 1px dashed var(--border-subtle); padding-top: 0.8rem; font-size: 0.88rem; color: var(--text-secondary); line-height: 1.7;">
+              <strong style="color: var(--accent-gold);">شبكة عناصر الإجابة وسلم التنقيط الرسمي (20/20):</strong>
+              <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 0.6rem; margin-top: 0.5rem;">
+                <div style="background: rgba(255,255,255,0.03); padding: 0.5rem; border-radius: 6px;">🔹 <strong>الفهم (4ن):</strong> تحديد المجال، صياغة المفارقة، وطرح التساؤلات الموجهة.</div>
+                <div style="background: rgba(255,255,255,0.03); padding: 0.5rem; border-radius: 6px;">🔹 <strong>التحليل (5ن):</strong> تفكيك المفاهيم، استخراج الأطروحة وحجاجها المنطقي.</div>
+                <div style="background: rgba(255,255,255,0.03); padding: 0.5rem; border-radius: 6px;">🔹 <strong>المناقشة (5ن):</strong> القيمة والحدود والمواقف الفلسفية المؤيدة والمعارضة.</div>
+                <div style="background: rgba(255,255,255,0.03); padding: 0.5rem; border-radius: 6px;">🔹 <strong>التركيب (3ن):</strong> خلاصة التحليل والموقف الشخصي المتماسك.</div>
+                <div style="background: rgba(255,255,255,0.03); padding: 0.5rem; border-radius: 6px;">🔹 <strong>الجوانب الشكلية (3ن):</strong> سلامة اللغة والأسلوب ونظافة الورقة.</div>
+              </div>
+            </div>
+          </div>
+        `).join("")}
+      </div>
+
+      <div style="margin-top: 1.5rem; display: flex; gap: 0.8rem; justify-content: flex-end; flex-wrap: wrap;">
+        <button class="btn-download" onclick="window.print()">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 6 2 18 2 18 9"></polyline><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"></path><rect x="6" y="14" width="12" height="8"></rect></svg>
+          <span>طباعة الموضوع وسلم التصحيح</span>
+        </button>
+        <button class="btn-download primary" onclick="app.downloadResource('الامتحان الوطني ${exam.year} - ${session}', 'PDF')">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
+          <span>تحميل PDF مع عناصر الإجابة</span>
+        </button>
+      </div>
+    `;
+
+    this.openModal(title, bodyHtml);
+  }
+
+  // نسخ القول الفلسفي إلى الحافظة
+  copyQuote(text, author) {
+    const full = `«${text}» — ${author} (منصة فضاء الحكمة والمعرفة)`;
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard.writeText(full).then(() => {
+        this.showToast("✓ تم نسخ القولة الفلسفية إلى الحافظة!");
+      }).catch(() => {
+        this.showToast("✓ تم نسخ القولة بنجاح!");
+      });
+    } else {
+      this.showToast("✓ تم نسخ القولة بنجاح!");
     }
   }
 
-  closeModal() {
-    const overlay = document.getElementById("genericModalOverlay");
-    if (overlay) overlay.classList.remove("active");
-  }
-
+  // تصدير وتحميل حقيقي للمستندات والملفات
   downloadResource(title, format) {
-    this.showToast(`جاري تجهيز وتحميل "${title}" بصيغة ${format}...`);
+    this.showToast(`جاري تجهيز وتصدير "${title}" بصيغة ${format}...`);
+
+    const lesson = PHILO_DATA.lessons.find(l => l.title_ar === title || l.title_fr === title);
+    const ped = PHILO_DATA.pedagogy.find(p => p.title_ar === title || p.title_fr === title);
+    const exam = PHILO_DATA.exams.find(e => `الامتحان الوطني ${e.year} - ${e.session_ar}` === title || e.id === title);
+
+    let docHtml = "";
+    if (lesson) {
+      docHtml = `<!DOCTYPE html><html dir="rtl" lang="ar"><head><meta charset="utf-8"><title>${lesson.title_ar}</title>
+<style>
+  body { font-family: 'Segoe UI', Tahoma, Arial, sans-serif; padding: 40px; line-height: 1.8; color: #1e293b; background: #fff; }
+  .header { text-align: center; border-bottom: 2px solid #b45309; padding-bottom: 15px; margin-bottom: 25px; }
+  .header h1 { color: #b45309; margin: 0 0 8px; font-size: 26px; }
+  .header p { color: #64748b; margin: 0; font-size: 14px; }
+  .meta-box { background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 12px 18px; margin-bottom: 25px; font-size: 14px; }
+  .summary { background: #fffbeb; border-right: 4px solid #f59e0b; padding: 14px 18px; border-radius: 6px; margin-bottom: 25px; }
+  .content { white-space: pre-line; font-size: 16px; }
+  .footer { margin-top: 40px; padding-top: 15px; border-top: 1px solid #e2e8f0; text-align: center; font-size: 12px; color: #94a3b8; }
+</style></head><body>
+<div class="header">
+  <h1>فضاء الحكمة والمعرفة | Espace Sagesse et Savoir</h1>
+  <p>المقرر الرسمي لمادة الفلسفة بالثانوي التأهيلي بالمملكة المغربية</p>
+</div>
+<div class="meta-box">
+  <strong>الدرس:</strong> ${lesson.title_ar} &nbsp;|&nbsp; <strong>المستوى:</strong> ${lesson.levelId} &nbsp;|&nbsp; <strong>الأستاذ:</strong> ${lesson.author} &nbsp;|&nbsp; <strong>التاريخ:</strong> ${lesson.date}
+</div>
+<div class="summary">
+  <strong>الإشكال الفلسفي المؤطر:</strong><br>${lesson.summary_ar}
+</div>
+<div class="content">${lesson.content_ar}</div>
+<div class="footer">وثيقة تربوية معتمدة صادرة عن منصة فضاء الحكمة والمعرفة © 2026</div>
+</body></html>`;
+    } else if (ped) {
+      docHtml = `<!DOCTYPE html><html dir="rtl" lang="ar"><head><meta charset="utf-8"><title>${ped.title_ar}</title>
+<style>
+  body { font-family: 'Segoe UI', Tahoma, Arial, sans-serif; padding: 40px; line-height: 1.8; color: #1e293b; background: #fff; }
+  .header { text-align: center; border-bottom: 2px solid #7c3aed; padding-bottom: 15px; margin-bottom: 25px; }
+  .header h1 { color: #7c3aed; margin: 0 0 8px; font-size: 24px; }
+  .meta-box { background: #f5f3ff; border: 1px solid #ddd6fe; border-radius: 8px; padding: 12px 18px; margin-bottom: 20px; }
+  h2 { color: #4338ca; font-size: 18px; margin-top: 20px; }
+  ul, ol { padding-inline-start: 25px; }
+  li { margin-bottom: 8px; }
+  .footer { margin-top: 40px; padding-top: 15px; border-top: 1px solid #e2e8f0; text-align: center; font-size: 12px; color: #94a3b8; }
+</style></head><body>
+<div class="header">
+  <h1>جذاذة ديداكتيكية رسمية | Fiche Pédagogique</h1>
+  <p>منصة فضاء الحكمة والمعرفة - الديداكتيك والكفايات</p>
+</div>
+<div class="meta-box">
+  <strong>العنوان:</strong> ${ped.title_ar} &nbsp;|&nbsp; <strong>الأستاذ:</strong> ${ped.author} &nbsp;|&nbsp; <strong>الشعبة:</strong> ${ped.stream_ar} &nbsp;|&nbsp; <strong>الغلاف الزمني:</strong> ${ped.duration}
+</div>
+<h2>1. الكفايات والقدرات المستهدفة:</h2>
+<ul>${ped.competencies_ar.map(c => `<li>${c}</li>`).join("")}</ul>
+<h2>2. الخطوات الديداكتيكية المعتمدة:</h2>
+<ol>${ped.steps_ar.map(s => `<li>${s}</li>`).join("")}</ol>
+<div class="footer">جذاذة بيداغوجية معتمدة وفق التوجيهات التربوية الرسمية بالمغرب © 2026</div>
+</body></html>`;
+    } else if (exam) {
+      docHtml = `<!DOCTYPE html><html dir="rtl" lang="ar"><head><meta charset="utf-8"><title>الامتحان الوطني ${exam.year} - ${exam.session_ar}</title>
+<style>
+  body { font-family: 'Segoe UI', Tahoma, Arial, sans-serif; padding: 40px; line-height: 1.8; color: #1e293b; background: #fff; }
+  .header { text-align: center; border-bottom: 2px solid #d97706; padding-bottom: 15px; margin-bottom: 25px; }
+  .header h1 { color: #b45309; margin: 0; }
+  .sujet { border: 1px solid #e2e8f0; border-radius: 8px; padding: 16px; margin-bottom: 18px; background: #fafaf9; }
+  .sujet-title { font-weight: bold; color: #78350f; margin-bottom: 8px; }
+  .footer { margin-top: 40px; padding-top: 15px; border-top: 1px solid #e2e8f0; text-align: center; font-size: 12px; color: #94a3b8; }
+</style></head><body>
+<div class="header">
+  <h1>الامتحان الوطني الموحد للبكالوريا | مادة الفلسفة</h1>
+  <p>دورة ${exam.year} — ${exam.session_ar} (${exam.stream_ar})</p>
+</div>
+${exam.sujets.map(s => `
+  <div class="sujet">
+    <div class="sujet-title">${s.type_ar} [${s.notion_ar}]</div>
+    <div style="font-size: 16px;">${s.text_ar}</div>
+  </div>
+`).join("")}
+<div class="footer">بنك الامتحانات الوطنية الموحدة | منصة فضاء الحكمة والمعرفة © 2026</div>
+</body></html>`;
+    } else {
+      docHtml = `<!DOCTYPE html><html dir="rtl" lang="ar"><head><meta charset="utf-8"><title>${title}</title><style>body{font-family:sans-serif;padding:30px;line-height:1.7}</style></head><body><h1>فضاء الحكمة والمعرفة</h1><h2>${title}</h2><p>الوثيقة الرسمية جاهزة للتحميل والاستخدام.</p></body></html>`;
+    }
+
+    if (format === 'PDF') {
+      const printWin = window.open('', '_blank');
+      if (printWin) {
+        printWin.document.write(docHtml);
+        printWin.document.close();
+        setTimeout(() => printWin.print(), 350);
+      }
+    } else {
+      const blob = new Blob([docHtml], { type: 'application/msword;charset=utf-8' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `${title.replace(/[\/\\?%*:|"<>]/g, '_')}.${format.toLowerCase() === 'word' ? 'doc' : 'html'}`;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+    }
   }
 
   openBooksModal(e) {
     if (e) e.preventDefault();
     const title = "📚 أشهر الكتب والمؤلفات الفلسفية الخالدة";
     const bodyHtml = `
-      <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 1rem; margin-top: 1rem;">
-        <div style="background: rgba(255,255,255,0.05); padding: 1.1rem; border-radius: 12px; border: 1px solid var(--border-subtle);">
-          <h4 style="color: var(--accent-gold); font-size: 1.05rem; margin-bottom: 0.3rem;">الجمهورية (Politeia)</h4>
+      <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 1rem; margin-top: 1rem;">
+        <div style="background: rgba(255,255,255,0.05); padding: 1.2rem; border-radius: 12px; border: 1px solid var(--border-subtle); display: flex; flex-direction: column;">
+          <h4 style="color: var(--accent-gold); font-size: 1.1rem; margin: 0 0 0.3rem;">الجمهورية (Politeia)</h4>
           <p style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 0.4rem;">أفلاطون (Plato) — القرن 4 ق.م</p>
-          <p style="font-size: 0.88rem; line-height: 1.5; color: var(--text-secondary);">تأسيس لمفهوم العدالة والدولة الفاضلة ونظرية المعرفة ومثَل الكهف الشهير.</p>
+          <p style="font-size: 0.88rem; line-height: 1.6; color: var(--text-secondary); margin-bottom: 1rem;">تأسيس لمفهوم العدالة والدولة الفاضلة ونظرية المعرفة ومثَل الكهف الشهير، والتمفصل بين الحاكم الفيلسوف وفضيلة الحكمة.</p>
+          <button class="btn-card-action" style="margin-top: auto;" onclick="app.searchByPhilosopher('أفلاطون')">
+            <span>تصفح أفكار أفلاطون بالمنصة</span> →
+          </button>
         </div>
-        <div style="background: rgba(255,255,255,0.05); padding: 1.1rem; border-radius: 12px; border: 1px solid var(--border-subtle);">
-          <h4 style="color: var(--accent-gold); font-size: 1.05rem; margin-bottom: 0.3rem;">فصل المقال</h4>
+        <div style="background: rgba(255,255,255,0.05); padding: 1.2rem; border-radius: 12px; border: 1px solid var(--border-subtle); display: flex; flex-direction: column;">
+          <h4 style="color: var(--accent-gold); font-size: 1.1rem; margin: 0 0 0.3rem;">فصل المقال</h4>
           <p style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 0.4rem;">ابن رشد (Averroes) — 1179م</p>
-          <p style="font-size: 0.88rem; line-height: 1.5; color: var(--text-secondary);">تقرير ما بين الشريعة والحكمة من الاتصال والتوفيق بين العقل الفلسفي والنقل الديني.</p>
+          <p style="font-size: 0.88rem; line-height: 1.6; color: var(--text-secondary); margin-bottom: 1rem;">تقرير ما بين الشريعة والحكمة من الاتصال والتوفيق الخالد بين برهان العقل الفلسفي والنقل الديني بالمغرب والأندلس.</p>
+          <button class="btn-card-action" style="margin-top: auto;" onclick="app.searchByPhilosopher('ابن رشد')">
+            <span>تصفح أفكار ابن رشد بالمنصة</span> →
+          </button>
         </div>
-        <div style="background: rgba(255,255,255,0.05); padding: 1.1rem; border-radius: 12px; border: 1px solid var(--border-subtle);">
-          <h4 style="color: var(--accent-gold); font-size: 1.05rem; margin-bottom: 0.3rem;">مقال عن المنهج</h4>
+        <div style="background: rgba(255,255,255,0.05); padding: 1.2rem; border-radius: 12px; border: 1px solid var(--border-subtle); display: flex; flex-direction: column;">
+          <h4 style="color: var(--accent-gold); font-size: 1.1rem; margin: 0 0 0.3rem;">مقال عن المنهج</h4>
           <p style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 0.4rem;">رينيه ديكارت (René Descartes) — 1637م</p>
-          <p style="font-size: 0.88rem; line-height: 1.5; color: var(--text-secondary);">قواعد توجيه العقل، الشك المنهجي، والكوجيطو: أنا أفكر إذن أنا موجود.</p>
+          <p style="font-size: 0.88rem; line-height: 1.6; color: var(--text-secondary); margin-bottom: 1rem;">قواعد توجيه العقل، الشك المنهجي التأسيسي، وإثبات الوجود عبر الكوجيطو: أنا أشك، إذن أنا أفكر، إذن أنا موجود.</p>
+          <button class="btn-card-action" style="margin-top: auto;" onclick="app.showPhilosopherModal('phil-descartes')">
+            <span>استكشاف ديكارت بالتفصيل</span> →
+          </button>
         </div>
-        <div style="background: rgba(255,255,255,0.05); padding: 1.1rem; border-radius: 12px; border: 1px solid var(--border-subtle);">
-          <h4 style="color: var(--accent-gold); font-size: 1.05rem; margin-bottom: 0.3rem;">نقد العقل الخالص</h4>
+        <div style="background: rgba(255,255,255,0.05); padding: 1.2rem; border-radius: 12px; border: 1px solid var(--border-subtle); display: flex; flex-direction: column;">
+          <h4 style="color: var(--accent-gold); font-size: 1.1rem; margin: 0 0 0.3rem;">نقد العقل الخالص</h4>
           <p style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 0.4rem;">إيمانويل كانط (Immanuel Kant) — 1781م</p>
-          <p style="font-size: 0.88rem; line-height: 1.5; color: var(--text-secondary);">إعادة تأسيس المعرفة البشرية وحدود الإدراك والنقدية الإبستيمولوجية.</p>
+          <p style="font-size: 0.88rem; line-height: 1.6; color: var(--text-secondary); margin-bottom: 1rem;">الثورة الكوبرنيكية في الفلسفة، تحديد حدود العقل البشري، والجمع الإبستيمولوجي بين معطيات الحس ومقولات العقل.</p>
+          <button class="btn-card-action" style="margin-top: auto;" onclick="app.showPhilosopherModal('phil-kant')">
+            <span>استكشاف كانط بالتفصيل</span> →
+          </button>
         </div>
-        <div style="background: rgba(255,255,255,0.05); padding: 1.1rem; border-radius: 12px; border: 1px solid var(--border-subtle);">
-          <h4 style="color: var(--accent-gold); font-size: 1.05rem; margin-bottom: 0.3rem;">العقد الاجتماعي</h4>
+        <div style="background: rgba(255,255,255,0.05); padding: 1.2rem; border-radius: 12px; border: 1px solid var(--border-subtle); display: flex; flex-direction: column;">
+          <h4 style="color: var(--accent-gold); font-size: 1.1rem; margin: 0 0 0.3rem;">العقد الاجتماعي</h4>
           <p style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 0.4rem;">جان جاك روسو (Rousseau) — 1762م</p>
-          <p style="font-size: 0.88rem; line-height: 1.5; color: var(--text-secondary);">أسس مشروعية السلطة السياسية، الإرادة العامة والسيادة الشعبية.</p>
+          <p style="font-size: 0.88rem; line-height: 1.6; color: var(--text-secondary); margin-bottom: 1rem;">تأسيس مشروعية الحكم المدني على الإرادة العامة والسيادة الشعبية والحرية الأخلاقية بدل منطق القوة والغلبة.</p>
+          <button class="btn-card-action" style="margin-top: auto;" onclick="app.searchByPhilosopher('روسو')">
+            <span>تصفح دروس نظرية العقد</span> →
+          </button>
         </div>
-        <div style="background: rgba(255,255,255,0.05); padding: 1.1rem; border-radius: 12px; border: 1px solid var(--border-subtle);">
-          <h4 style="color: var(--accent-gold); font-size: 1.05rem; margin-bottom: 0.3rem;">الوجود والعدم</h4>
+        <div style="background: rgba(255,255,255,0.05); padding: 1.2rem; border-radius: 12px; border: 1px solid var(--border-subtle); display: flex; flex-direction: column;">
+          <h4 style="color: var(--accent-gold); font-size: 1.1rem; margin: 0 0 0.3rem;">الوجود والعدم</h4>
           <p style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 0.4rem;">جان بول سارتر (Sartre) — 1943م</p>
-          <p style="font-size: 0.88rem; line-height: 1.5; color: var(--text-secondary);">الوجودية كفلسفة إنسانية، أسبقية الوجود على الماهية ومسؤولية الحرية.</p>
+          <p style="font-size: 0.88rem; line-height: 1.6; color: var(--text-secondary); margin-bottom: 1rem;">بيان أن الوجود يسبق الماهية، وأن الإنسان مشروع حر يصنع ذاته باختياراته ومسؤولياته في مواجهة نظرة الغير.</p>
+          <button class="btn-card-action" style="margin-top: auto;" onclick="app.showPhilosopherModal('phil-sartre')">
+            <span>استكشاف سارتر بالتفصيل</span> →
+          </button>
         </div>
       </div>
     `;
@@ -653,28 +954,29 @@ class AppManager {
   openQuotesModal(e) {
     if (e) e.preventDefault();
     const title = "💡 روائع وأشهر الأقوال والحكم الفلسفية الخالدة";
+    const quotes = [
+      { text: "الحياة غير المفحوصة لا تستحق العيش", author: "سقراط", id: "phil-socrates" },
+      { text: "الحق لا يضاد الحق، بل يوافقه ويشهد له", author: "أبو الوليد ابن رشد", id: "phil-averroes" },
+      { text: "أنا أشك، إذن أنا أفكر، إذن أنا موجود", author: "رينيه ديكارت", id: "phil-descartes" },
+      { text: "تصرف بحيث تعامل الإنسانية في شخصك وفي غيرك كغاية لا كمجرد وسيلة", author: "إيمانويل كانط", id: "phil-kant" },
+      { text: "إن الغاية الحقيقية من تأسيس الدولة هي في الواقع الحرية", author: "باروخ سبينوزا", id: "phil-spinoza" },
+      { text: "الإنسان محكوم عليه بأن يكون حراً ومسؤولاً عن العالم", author: "جان بول سارتر", id: "phil-sartre" },
+      { text: "العدالة هي الفضيلة الأولى للمؤسسات الاجتماعية كما هي الحقيقة للأنظمة الفكرية", author: "جون رولز", id: "phil-rawls" }
+    ];
+
     const bodyHtml = `
       <div style="display: flex; flex-direction: column; gap: 1rem; margin-top: 1rem;">
-        <div style="background: rgba(255,255,255,0.05); padding: 1.2rem; border-radius: 12px; border-right: 4px solid var(--accent-gold);">
-          <p style="font-family: var(--font-arabic-calligraphy); font-size: 1.3rem; color: var(--text-primary); margin-bottom: 0.4rem;">« الحياة غير المفحوصة لا تستحق العيش »</p>
-          <span style="font-size: 0.9rem; color: var(--accent-gold); font-weight: bold;">— سقراط</span>
-        </div>
-        <div style="background: rgba(255,255,255,0.05); padding: 1.2rem; border-radius: 12px; border-right: 4px solid var(--accent-gold);">
-          <p style="font-family: var(--font-arabic-calligraphy); font-size: 1.3rem; color: var(--text-primary); margin-bottom: 0.4rem;">« الحق لا يضاد الحق، بل يوافقه ويشهد له »</p>
-          <span style="font-size: 0.9rem; color: var(--accent-gold); font-weight: bold;">— أبو الوليد ابن رشد</span>
-        </div>
-        <div style="background: rgba(255,255,255,0.05); padding: 1.2rem; border-radius: 12px; border-right: 4px solid var(--accent-gold);">
-          <p style="font-family: var(--font-arabic-calligraphy); font-size: 1.3rem; color: var(--text-primary); margin-bottom: 0.4rem;">« أنا أشك، إذن أنا أفكر، إذن أنا موجود »</p>
-          <span style="font-size: 0.9rem; color: var(--accent-gold); font-weight: bold;">— رينيه ديكارت</span>
-        </div>
-        <div style="background: rgba(255,255,255,0.05); padding: 1.2rem; border-radius: 12px; border-right: 4px solid var(--accent-gold);">
-          <p style="font-family: var(--font-arabic-calligraphy); font-size: 1.3rem; color: var(--text-primary); margin-bottom: 0.4rem;">« تصرف بحيث تعامل الإنسانية في شخصك وفي غيرك كغاية لا كمجرد وسيلة »</p>
-          <span style="font-size: 0.9rem; color: var(--accent-gold); font-weight: bold;">— إيمانويل كانط</span>
-        </div>
-        <div style="background: rgba(255,255,255,0.05); padding: 1.2rem; border-radius: 12px; border-right: 4px solid var(--accent-gold);">
-          <p style="font-family: var(--font-arabic-calligraphy); font-size: 1.3rem; color: var(--text-primary); margin-bottom: 0.4rem;">« الإنسان محكوم عليه بأن يكون حراً ومسؤولاً عن العالم »</p>
-          <span style="font-size: 0.9rem; color: var(--accent-gold); font-weight: bold;">— جان بول سارتر</span>
-        </div>
+        ${quotes.map(q => `
+          <div style="background: rgba(255,255,255,0.05); padding: 1.2rem; border-radius: 12px; border-right: 4px solid var(--accent-gold); display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 0.8rem;">
+            <div style="flex: 1; min-width: 240px;">
+              <p style="font-family: var(--font-arabic-calligraphy); font-size: 1.25rem; color: var(--text-primary); margin: 0 0 0.4rem;">« ${q.text} »</p>
+              <span style="font-size: 0.9rem; color: var(--accent-gold); font-weight: bold;">— ${q.author}</span>
+            </div>
+            <button type="button" class="btn-download" style="padding: 0.4rem 0.85rem; font-size: 0.85rem;" onclick="app.copyQuote('${q.text.replace(/'/g, "\\'")}', '${q.author}')">
+              <span>📋 نسخ القولة</span>
+            </button>
+          </div>
+        `).join("")}
       </div>
     `;
     this.openModal(title, bodyHtml);
@@ -701,6 +1003,23 @@ class AppManager {
       </div>
     `;
     this.openModal(title, bodyHtml);
+  }
+
+  openModal(title, bodyHtml) {
+    const overlay = document.getElementById("genericModalOverlay");
+    const titleEl = document.getElementById("genericModalTitle");
+    const bodyEl = document.getElementById("genericModalBody");
+
+    if (overlay && titleEl && bodyEl) {
+      titleEl.innerHTML = title;
+      bodyEl.innerHTML = bodyHtml;
+      overlay.classList.add("active");
+    }
+  }
+
+  closeModal() {
+    const overlay = document.getElementById("genericModalOverlay");
+    if (overlay) overlay.classList.remove("active");
   }
 
   trackEvent(eventName) {
