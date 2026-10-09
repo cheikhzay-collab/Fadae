@@ -1133,14 +1133,14 @@ class AdminManager {
   }
 
   saveResource() {
-    const titleAr = document.getElementById("formTitleAr").value.trim();
-    const titleFr = document.getElementById("formTitleFr").value.trim() || titleAr;
-    const levelId = document.getElementById("formLevel").value;
-    const moduleId = document.getElementById("formModule").value;
-    const author = document.getElementById("formAuthor").value.trim() || "أستاذ باحث";
-    const summaryAr = document.getElementById("formSummary").value.trim();
-    const contentAr = document.getElementById("formContent").value.trim();
-    const tags = document.getElementById("formTags").value.split(",").map(s => s.trim()).filter(Boolean);
+    const titleAr = document.getElementById("formTitleAr")?.value.trim() || "";
+    const titleFr = document.getElementById("formTitleFr")?.value.trim() || titleAr;
+    const levelId = document.getElementById("formLevel")?.value || "2bac";
+    const moduleId = document.getElementById("formModule")?.value || "mod-human-condition";
+    const author = document.getElementById("formAuthor")?.value.trim() || "أستاذ باحث";
+    const summaryAr = document.getElementById("formSummary")?.value.trim() || "";
+    const contentAr = document.getElementById("formContent")?.value.trim() || "";
+    const tags = (document.getElementById("formTags")?.value || "").split(",").map(s => s.trim()).filter(Boolean);
 
     if (this.editingId) {
       const idx = PHILO_DATA.lessons.findIndex(l => l.id === this.editingId);

@@ -66,5 +66,9 @@ if ($method === 'POST') {
         } catch (Exception $e) {
             send_json_response(['success' => false, 'error' => $e->getMessage()], 500);
         }
+    } else {
+        send_json_response(['success' => true, 'message' => 'تم حفظ الجذاذة محلياً (وضع عدم الاتصال)'], 201);
     }
 }
+
+send_json_response(['success' => false, 'message' => 'طريقة الطلب غير مدعومة'], 405);
