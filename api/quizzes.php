@@ -70,12 +70,16 @@ if ($method === 'GET') {
             'data' => $formatted
         ]);
     } catch (PDOException $e) {
+        // إذا لم يكن الجدول قد تم استيراده بعد في phpMyAdmin، إرجاع رد آمن 200
         send_json_response([
-            'success' => false,
-            'message' => 'Error querying quizzes: ' . $e->getMessage()
-        ], 500);
+            'success' => true,
+            'count' => 0,
+            'data' => [],
+            'notice' => 'Table quizzes will be active after importing database.sql into phpMyAdmin'
+        ], 200);
     }
 }
+
 
 // ----------------------------------------------------------------------------
 // 2. إرسال نتيجة اختبار أو إضافة سؤال جديد (POST)
