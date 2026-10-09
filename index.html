@@ -295,7 +295,7 @@
           </div>
 
           <!-- البطاقة 5: قناة فضاء الحكمة (أقصى اليمين بالصورة) -->
-          <div class="exact-card" onclick="app.openYouTube(event)" style="cursor: pointer;" title="مشاهدة قناة فضاء الحكمة على يوتيوب">
+          <div class="exact-card" onclick="window.open('https://www.youtube.com/channel/UCBRJ5LZu3_ZRPhpB1MMEeWg', '_blank', 'noopener')" style="cursor: pointer;" title="مشاهدة قناة فضاء الحكمة على يوتيوب">
             <div class="card-thumb-wrap">
               <img src="assets/card_youtube.jpg" alt="قناة فضاء الحكمة" class="card-thumb-img" loading="lazy">
               <div class="card-badge-circle red-border">
@@ -305,9 +305,9 @@
             <div class="card-content">
               <h3 class="card-title">قناة فضاء الحكمة</h3>
               <p class="card-desc">شاهد، تعلّم، وكن جزءاً من مجتمعنا</p>
-              <button type="button" class="card-action-btn red" onclick="app.openYouTube(event)" title="زيارة قناة اليوتيوب">
+              <a href="https://www.youtube.com/channel/UCBRJ5LZu3_ZRPhpB1MMEeWg" target="_blank" rel="noopener" class="card-action-btn red" title="زيارة قناة اليوتيوب">
                 <span>→</span>
-              </button>
+              </a>
             </div>
           </div>
 
@@ -324,18 +324,20 @@
           
           <!-- الجانب الأيسر: دعوة الاشتراك في يوتيوب -->
           <div class="middle-yt-cta">
-            <div class="yt-badge-icon" aria-hidden="true">
+            <a href="https://www.youtube.com/channel/UCBRJ5LZu3_ZRPhpB1MMEeWg?sub_confirmation=1" target="_blank" rel="noopener" class="yt-badge-icon" aria-label="قناة فضاء الحكمة على يوتيوب" style="text-decoration: none; display: inline-flex;">
               <svg viewBox="0 0 48 48" width="48" height="48" fill="none">
                 <rect width="48" height="48" rx="12" fill="#E50914"/>
                 <path d="M31 24L20 17.5V30.5L31 24Z" fill="white"/>
               </svg>
-            </div>
+            </a>
             <div class="yt-cta-texts">
               <span class="yt-label-top">تابع قناتنا على يوتيوب</span>
-              <h2 class="yt-main-title">فضاء الحكمة</h2>
+              <a href="https://www.youtube.com/channel/UCBRJ5LZu3_ZRPhpB1MMEeWg" target="_blank" rel="noopener" style="text-decoration: none; color: inherit;">
+                <h2 class="yt-main-title">فضاء الحكمة</h2>
+              </a>
               <p class="yt-subtitle">محتوى مميز حول الفلسفة والفكر والمعرفة</p>
             </div>
-            <a href="https://www.youtube.com" target="_blank" rel="noopener" class="btn-yt-subscribe" onclick="app.trackEvent('youtube_click')">
+            <a href="https://www.youtube.com/channel/UCBRJ5LZu3_ZRPhpB1MMEeWg?sub_confirmation=1" target="_blank" rel="noopener" class="btn-yt-subscribe" onclick="app.trackEvent('youtube_click')">
               <span>اشترك الآن</span>
               <span class="arrow-sym">←</span>
             </a>

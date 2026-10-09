@@ -1000,16 +1000,18 @@ ${exam.sujets.map(s => `
   }
 
   playPromoVideo() {
-    const title = "▶️ العرض التعريفي لمنصة فضاء الحكمة والمعرفة";
+    const title = "▶️ العرض التعريفي وقناة فضاء الحكمة والمعرفة";
     const bodyHtml = `
       <div style="text-align: center; padding: 1rem 0;">
         <div style="position: relative; padding-bottom: 56.25%; height: 0; overflow: hidden; border-radius: 14px; background: #000; margin-bottom: 1.2rem;">
-          <iframe style="position: absolute; top:0; left: 0; width: 100%; height: 100%; border: none;" src="https://www.youtube-nocookie.com/embed/dQw4w9WgXcQ?autoplay=1" allowfullscreen></iframe>
+          <iframe style="position: absolute; top:0; left: 0; width: 100%; height: 100%; border: none;" src="https://www.youtube-nocookie.com/embed/videoseries?list=UUBRJ5LZu3_ZRPhpB1MMEeWg&autoplay=1" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
         </div>
-        <p style="font-size: 0.95rem; color: var(--text-secondary); margin-bottom: 1rem;">تابع دروس الفلسفة، مناهج التحليل والمناظرات عبر قناتنا الرسمية على يوتيوب.</p>
-        <a href="https://www.youtube.com" target="_blank" rel="noopener" class="btn-download primary" style="display: inline-flex; align-items: center; gap: 0.5rem; text-decoration: none;">
-          <span>زيارة القناة والاشتراك</span>
-          <span>←</span>
+        <p style="font-size: 0.98rem; color: var(--text-secondary); margin-bottom: 1.2rem; line-height: 1.6;">
+          تابع شروحات دروس الفلسفة، مناهج التحليل والإنشاء الفلسفي، والمناظرات الفكرية عبر قناتنا الرسمية على يوتيوب.
+        </p>
+        <a href="https://www.youtube.com/channel/UCBRJ5LZu3_ZRPhpB1MMEeWg?sub_confirmation=1" target="_blank" rel="noopener" class="btn-download primary" style="display: inline-flex; align-items: center; gap: 0.6rem; text-decoration: none; padding: 0.75rem 1.6rem; font-size: 1rem;">
+          <span>زيارة القناة الرسمية والاشتراك الآن</span>
+          <span style="font-size: 1.2rem;">←</span>
         </a>
       </div>
     `;
