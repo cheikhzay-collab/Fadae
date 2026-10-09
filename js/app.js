@@ -7,6 +7,14 @@ class AppManager {
   constructor() {
     this.currentFilter = "all";
     this.searchQuery = "";
+    this.currentQuizModule = "all";
+    this.currentQuizIndex = 0;
+    this.quizScore = 0;
+    this.quizStreak = 0;
+    this.quizAnswered = false;
+    this.selectedQuizOption = null;
+    this.currentMindmapModule = "mod-human-condition";
+    this.deferredInstallPrompt = null;
     this.init();
   }
 
@@ -14,6 +22,7 @@ class AppManager {
     this.setupTheme();
     this.setupScrollHeader();
     this.setupMobileAppFeatures();
+    this.setupPwaAndOffline();
     this.bindEvents();
     this.renderAll();
     this.loadRemoteLessons();
@@ -262,8 +271,10 @@ class AppManager {
     this.renderLessons();
     this.renderPedagogy();
     this.renderExams();
-    this.renderPhilosophers();
     this.renderMethodology();
+    this.renderQuiz();
+    this.renderMindmaps();
+    this.renderPhilosophers();
   }
 
   // عرض بطاقات المستويات
@@ -1043,7 +1054,397 @@ ${exam.sujets.map(s => `
       toast.style.display = "none";
     }, 3500);
   }
+
+  // ========================================================================
+  // المحور 4: تطبيق الويب التقدمي (PWA) ودعم العمل دون إنترنت (Offline Mode)
+  // ========================================================================
+  setupPwaAndOffline() {
+    // 1. تسجيل الـ Service Worker
+    if ("serviceWorker" in navigator) {
+      window.addEventListener("load", () => {
+        navigator.serviceWorker.register("sw.js")
+          .then((registration) => {
+            console.log("Service Worker registered successfully:", registration.scope);
+          })
+          .catch((err) => {
+            console.warn("Service Worker registration failed:", err);
+          });
+      });
+    }
+
+    // 2. معالجة زر تثبيت التطبيق (PWA Install Prompt)
+    const btnInstall = document.getElementById("btnPwaInstall");
+    const btnDrawerInstall = document.getElementById("btnDrawerInstall");
+
+    window.addEventListener("beforeinstallprompt", (e) => {
+      e.preventDefault();
+      this.deferredInstallPrompt = e;
+      if (btnInstall) btnInstall.style.display = "inline-flex";
+      if (btnDrawerInstall) btnDrawerInstall.style.display = "inline-flex";
+    });
+
+    const handleInstallClick = () => {
+      if (this.deferredInstallPrompt) {
+        this.deferredInstallPrompt.prompt();
+        this.deferredInstallPrompt.userChoice.then((choiceResult) => {
+          if (choiceResult.outcome === "accepted") {
+            this.showToast("🎉 رائع! تم تثبيت تطبيق فضاء الحكمة بنجاح.");
+            if (btnInstall) btnInstall.style.display = "none";
+            if (btnDrawerInstall) btnDrawerInstall.style.display = "none";
+          }
+          this.deferredInstallPrompt = null;
+        });
+      } else {
+        this.showToast("📱 لتثبيت التطبيق على جهازك: افتح خيارات المتصفح واختر «إضافة إلى الشاشة الرئيسية».");
+      }
+    };
+
+    if (btnInstall) btnInstall.addEventListener("click", handleInstallClick);
+    if (btnDrawerInstall) {
+      btnDrawerInstall.addEventListener("click", () => {
+        this.closeDrawer();
+        handleInstallClick();
+      });
+    }
+
+    window.addEventListener("appinstalled", () => {
+      this.showToast("🌟 تطبيق فضاء الحكمة جاهز الآن للاستخدام بدون إنترنت!");
+      if (btnInstall) btnInstall.style.display = "none";
+      if (btnDrawerInstall) btnDrawerInstall.style.display = "none";
+    });
+
+    // 3. مراقبة حالة الاتصال بالإنترنت
+    const updateOnlineStatus = () => {
+      const offlineIndicator = document.getElementById("offlineIndicator");
+      if (offlineIndicator) {
+        offlineIndicator.style.display = navigator.onLine ? "none" : "block";
+      }
+    };
+
+    window.addEventListener("online", () => {
+      updateOnlineStatus();
+      this.showToast("🟢 تم استعادة الاتصال بالإنترنت بنجاح.");
+    });
+
+    window.addEventListener("offline", () => {
+      updateOnlineStatus();
+      this.showToast("📡 أنت الآن في وضع التصفح بدون إنترنت (Offline). المتن المعرفي والاختبارات متاحة.");
+    });
+
+    updateOnlineStatus();
+  }
+
+  // ========================================================================
+  // المحور 2: بنك الاختبارات التفاعلية والتقييم الذاتي (Interactive QCM Quizzes)
+  // ========================================================================
+  filterQuiz(moduleId) {
+    this.currentQuizModule = moduleId;
+    this.currentQuizIndex = 0;
+    this.quizScore = 0;
+    this.quizStreak = 0;
+    this.quizAnswered = false;
+    this.selectedQuizOption = null;
+
+    // تحديث الأزرار النشطة
+    const filterContainer = document.getElementById("quizModulesFilter");
+    if (filterContainer) {
+      const pills = filterContainer.querySelectorAll(".filter-pill");
+      pills.forEach((p, idx) => {
+        const targetIds = ["all", "mod-human-condition", "mod-knowledge", "mod-politics", "mod-ethics"];
+        if (targetIds[idx] === moduleId) {
+          p.classList.add("active");
+        } else {
+          p.classList.remove("active");
+        }
+      });
+    }
+
+    this.renderQuiz();
+  }
+
+  getQuizQuestions() {
+    if (!PHILO_DATA.quizzes) return [];
+    if (this.currentQuizModule === "all") {
+      return PHILO_DATA.quizzes;
+    }
+    return PHILO_DATA.quizzes.filter(q => q.moduleId === this.currentQuizModule);
+  }
+
+  renderQuiz() {
+    const container = document.getElementById("quizCardWrapper");
+    if (!container) return;
+    const lang = window.i18n.getLang();
+
+    const questions = this.getQuizQuestions();
+    const total = questions.length;
+
+    if (total === 0) {
+      container.innerHTML = `
+        <div style="text-align: center; padding: 3rem; background: var(--bg-secondary); border-radius: 16px; border: 1px solid var(--border-subtle);">
+          <p style="font-size: 1.1rem; color: var(--text-secondary);">لا توجد أسئلة متوفرة حالياً في هذا التصنيف.</p>
+        </div>
+      `;
+      return;
+    }
+
+    // إذا انتهى الاختبار: عرض شاشة التتويج والنتيجة
+    if (this.currentQuizIndex >= total) {
+      const percentage = Math.round((this.quizScore / total) * 100);
+      let rankTitle = "فيلسوف عبقري 🌟";
+      let rankDesc = "استيعاب استثنائي للمفاهيم والمواقف الفلسفية ونصوص المقررات!";
+      if (percentage < 50) {
+        rankTitle = "في طور التكوين والبحث 📚";
+        rankDesc = "بداية جيدة! راجع الملخصات والمفاهيم وأعد المحاولة لتحقيق درجات أعلى.";
+      } else if (percentage < 80) {
+        rankTitle = "باحث متألق 💡";
+        rankDesc = "مستوى جيد جداً وقدرة واضحة على التمييز بين الأطروحات الفلسفية.";
+      }
+
+      container.innerHTML = `
+        <div class="quiz-result-card" style="text-align: center; padding: 2.5rem 1.5rem; background: var(--bg-card); border-radius: 16px; border: 1px solid var(--border-medium); box-shadow: var(--shadow-lg); max-width: 650px; margin: 0 auto;">
+          <div style="font-size: 3.5rem; margin-bottom: 0.8rem;">🏆</div>
+          <h3 style="font-size: 1.6rem; color: var(--accent-gold); margin-bottom: 0.5rem; font-weight: 800;">${rankTitle}</h3>
+          <p style="font-size: 0.98rem; color: var(--text-secondary); margin-bottom: 1.5rem;">${rankDesc}</p>
+
+          <div style="background: var(--bg-tertiary); padding: 1.5rem; border-radius: 12px; margin-bottom: 2rem; display: flex; justify-content: space-around; align-items: center;">
+            <div>
+              <span style="display: block; font-size: 2rem; font-weight: 900; color: var(--text-primary);">${this.quizScore} / ${total}</span>
+              <span style="font-size: 0.85rem; color: var(--text-muted);">الإجابات الصحيحة</span>
+            </div>
+            <div style="width: 1px; height: 50px; background: var(--border-subtle);"></div>
+            <div>
+              <span style="display: block; font-size: 2rem; font-weight: 900; color: var(--accent-gold);">${percentage}%</span>
+              <span style="font-size: 0.85rem; color: var(--text-muted);">نسبة النجاح</span>
+            </div>
+          </div>
+
+          <div style="display: flex; gap: 0.8rem; justify-content: center; flex-wrap: wrap;">
+            <button type="button" class="btn-download primary" onclick="app.restartQuiz()">
+              <span>🔄 إعادة الاختبار</span>
+            </button>
+            <button type="button" class="btn-download" onclick="app.filterQuiz('all')">
+              <span>🌐 اختبار جميع المجزوءات</span>
+            </button>
+          </div>
+        </div>
+      `;
+      return;
+    }
+
+    // عرض السؤال الحالي
+    const q = questions[this.currentQuizIndex];
+    const questionText = lang === "ar" ? q.question_ar : q.question_fr;
+    const options = lang === "ar" ? q.options_ar : q.options_fr;
+    const explanation = lang === "ar" ? q.explanation_ar : q.explanation_fr;
+    const progressPercent = Math.round(((this.currentQuizIndex + 1) / total) * 100);
+
+    const optionLabels = ["أ", "ب", "ج", "د"];
+
+    container.innerHTML = `
+      <div class="quiz-card" style="background: var(--bg-card); border: 1px solid var(--border-medium); border-radius: 16px; padding: 2rem; max-width: 820px; margin: 0 auto; box-shadow: var(--shadow-md);">
+        <!-- شريط التقدم والعداد -->
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.2rem; flex-wrap: wrap; gap: 0.6rem;">
+          <div style="display: flex; align-items: center; gap: 0.6rem;">
+            <span class="pedagogy-badge" style="background: rgba(245, 158, 11, 0.15); color: var(--accent-gold);">
+              ${q.concept || 'مفهوم فلسفي'}
+            </span>
+            <span style="font-size: 0.88rem; color: var(--text-muted); font-weight: 600;">
+              السؤال ${this.currentQuizIndex + 1} من ${total}
+            </span>
+          </div>
+
+          <div style="display: flex; align-items: center; gap: 1rem;">
+            <span style="font-size: 0.9rem; font-weight: 700; color: var(--accent-gold);">
+              ⭐ النقاط: ${this.quizScore}
+            </span>
+            ${this.quizStreak > 1 ? `<span style="background: rgba(239, 68, 68, 0.15); color: #f87171; padding: 0.2rem 0.6rem; border-radius: 20px; font-size: 0.8rem; font-weight: bold;">🔥 حماس ${this.quizStreak}</span>` : ''}
+          </div>
+        </div>
+
+        <!-- شريط تقدمي أفقي -->
+        <div style="width: 100%; height: 6px; background: var(--bg-tertiary); border-radius: 999px; margin-bottom: 1.8rem; overflow: hidden;">
+          <div style="width: ${progressPercent}%; height: 100%; background: linear-gradient(90deg, #f59e0b, #eab308); transition: width 0.3s ease;"></div>
+        </div>
+
+        <!-- نص السؤال -->
+        <h3 style="font-size: 1.28rem; font-weight: 800; color: var(--text-primary); line-height: 1.6; margin-bottom: 1.8rem;">
+          ${questionText}
+        </h3>
+
+        <!-- خيارات الإجابة الأربعة -->
+        <div class="quiz-options-grid" style="display: flex; flex-direction: column; gap: 0.85rem;">
+          ${options.map((opt, idx) => {
+            let stateClass = "";
+            let badgeStyle = "background: var(--bg-tertiary); color: var(--text-secondary);";
+
+            if (this.quizAnswered) {
+              if (idx === q.correctIndex) {
+                stateClass = "correct";
+                badgeStyle = "background: #10b981; color: #fff;";
+              } else if (idx === this.selectedQuizOption) {
+                stateClass = "wrong";
+                badgeStyle = "background: #ef4444; color: #fff;";
+              }
+            }
+
+            return `
+              <button type="button" class="quiz-option-btn ${stateClass}" 
+                onclick="app.selectQuizOption(${idx})" 
+                ${this.quizAnswered ? 'disabled' : ''}
+                style="display: flex; align-items: center; gap: 1rem; padding: 1.1rem 1.3rem; border-radius: 12px; border: 1px solid var(--border-subtle); background: var(--bg-secondary); color: var(--text-primary); font-size: 1rem; text-align: start; cursor: ${this.quizAnswered ? 'default' : 'pointer'}; transition: all 0.2s ease;">
+                <span style="display: inline-flex; align-items: center; justify-content: center; width: 32px; height: 32px; border-radius: 50%; font-weight: bold; flex-shrink: 0; ${badgeStyle}">
+                  ${optionLabels[idx]}
+                </span>
+                <span style="flex: 1; line-height: 1.5;">${opt}</span>
+                ${this.quizAnswered && idx === q.correctIndex ? '<span style="color: #10b981; font-size: 1.2rem;">✓</span>' : ''}
+                ${this.quizAnswered && idx === this.selectedQuizOption && idx !== q.correctIndex ? '<span style="color: #ef4444; font-size: 1.2rem;">✗</span>' : ''}
+              </button>
+            `;
+          }).join("")}
+        </div>
+
+        <!-- صندوق التوضيح الفلسفي بعد الإجابة -->
+        ${this.quizAnswered ? `
+          <div class="quiz-explanation-box" style="margin-top: 1.8rem; padding: 1.3rem; background: rgba(245, 158, 11, 0.08); border-right: 4px solid var(--accent-gold); border-radius: 10px; animation: toast-in 0.25s ease;">
+            <div style="display: flex; align-items: center; gap: 0.5rem; color: var(--accent-gold); font-weight: 800; font-size: 0.95rem; margin-bottom: 0.4rem;">
+              <span>💡 التوجيه الفلسفي والتعليل (${q.philosopher || 'إضاءة'}):</span>
+            </div>
+            <p style="font-size: 0.92rem; color: var(--text-secondary); line-height: 1.7; margin: 0;">
+              ${explanation}
+            </p>
+          </div>
+
+          <div style="margin-top: 1.6rem; display: flex; justify-content: flex-end;">
+            <button type="button" class="btn-download primary" onclick="app.nextQuizQuestion()" style="padding: 0.65rem 1.6rem; font-size: 1rem;">
+              <span>${this.currentQuizIndex + 1 < total ? 'السؤال التالي ←' : 'عرض النتيجة النهائية 🏆'}</span>
+            </button>
+          </div>
+        ` : ''}
+      </div>
+    `;
+  }
+
+  selectQuizOption(index) {
+    if (this.quizAnswered) return;
+
+    this.quizAnswered = true;
+    this.selectedQuizOption = index;
+
+    const questions = this.getQuizQuestions();
+    const q = questions[this.currentQuizIndex];
+
+    if (index === q.correctIndex) {
+      this.quizScore += 1;
+      this.quizStreak += 1;
+      this.showToast("✨ إجابة فلسفية موفقة وصحيحة!");
+    } else {
+      this.quizStreak = 0;
+      this.showToast("💡 إجابة غير دقيقة - طالع التوجيه والتعليل الفلسفي أسفله.");
+    }
+
+    this.renderQuiz();
+  }
+
+  nextQuizQuestion() {
+    this.currentQuizIndex += 1;
+    this.quizAnswered = false;
+    this.selectedQuizOption = null;
+    this.renderQuiz();
+  }
+
+  restartQuiz() {
+    this.currentQuizIndex = 0;
+    this.quizScore = 0;
+    this.quizStreak = 0;
+    this.quizAnswered = false;
+    this.selectedQuizOption = null;
+    this.renderQuiz();
+  }
+
+  // ========================================================================
+  // المحور 2: الخرائط المفاهيمية البصرية التفاعلية (Interactive Mind Maps)
+  // ========================================================================
+  setMindmapModule(moduleId) {
+    this.currentMindmapModule = moduleId;
+
+    const nav = document.getElementById("mindmapTabsNav");
+    if (nav) {
+      const pills = nav.querySelectorAll(".filter-pill");
+      const targetIds = ["mod-human-condition", "mod-knowledge", "mod-politics", "mod-ethics"];
+      pills.forEach((p, idx) => {
+        if (targetIds[idx] === moduleId) {
+          p.classList.add("active");
+        } else {
+          p.classList.remove("active");
+        }
+      });
+    }
+
+    this.renderMindmaps();
+  }
+
+  renderMindmaps() {
+    const container = document.getElementById("mindmapViewer");
+    if (!container || !PHILO_DATA.mindmaps) return;
+    const lang = window.i18n.getLang();
+
+    const currentMap = PHILO_DATA.mindmaps.find(m => m.moduleId === this.currentMindmapModule) || PHILO_DATA.mindmaps[0];
+    const mapTitle = lang === "ar" ? currentMap.title_ar : currentMap.title_fr;
+
+    container.innerHTML = `
+      <div class="mindmap-canvas" style="background: var(--bg-card); border: 1px solid var(--border-medium); border-radius: 16px; padding: 2rem; box-shadow: var(--shadow-md);">
+        <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border-subtle); padding-bottom: 1.2rem; margin-bottom: 2rem; flex-wrap: wrap; gap: 0.8rem;">
+          <div>
+            <h3 style="font-size: 1.45rem; color: var(--accent-gold); font-weight: 800; margin: 0 0 0.3rem;">${mapTitle}</h3>
+            <span style="font-size: 0.88rem; color: var(--text-muted);">${currentMap.badge_ar || 'شبكة المفاهيم والإشكالات'}</span>
+          </div>
+          <button type="button" class="btn-download" onclick="window.print()">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 6 2 18 2 18 9"></polyline><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"></path><rect x="6" y="14" width="12" height="8"></rect></svg>
+            <span>طباعة المخطط المفاهيمي</span>
+          </button>
+        </div>
+
+        <div class="mindmap-concepts-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 1.8rem;">
+          ${currentMap.concepts.map(concept => `
+            <div class="mindmap-concept-node" style="background: var(--bg-secondary); border: 1px solid var(--border-subtle); border-radius: 14px; padding: 1.5rem; transition: transform 0.2s ease;">
+              <div style="display: flex; align-items: center; gap: 0.6rem; margin-bottom: 1.2rem; border-bottom: 2px solid rgba(245, 158, 11, 0.3); padding-bottom: 0.6rem;">
+                <span style="font-size: 1.4rem;">📌</span>
+                <h4 style="font-size: 1.2rem; font-weight: 800; color: var(--text-primary); margin: 0;">${concept.name_ar}</h4>
+              </div>
+
+              <div style="display: flex; flex-direction: column; gap: 1.2rem;">
+                ${concept.axes.map(axis => `
+                  <div class="mindmap-axis-box" style="background: var(--bg-tertiary); border-radius: 10px; padding: 1.1rem; border: 1px solid rgba(255, 255, 255, 0.05);">
+                    <div style="font-size: 0.92rem; font-weight: 800; color: var(--accent-gold); margin-bottom: 0.8rem; line-height: 1.5;">
+                      ❓ ${axis.problem_ar}
+                    </div>
+
+                    <div style="display: flex; flex-direction: column; gap: 0.65rem;">
+                      ${axis.philosophers.map(phil => `
+                        <div style="background: var(--bg-card); padding: 0.8rem 1rem; border-radius: 8px; border-right: 3px solid #3b82f6;">
+                          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.3rem;">
+                            <strong style="font-size: 0.9rem; color: #60a5fa;">🏛️ ${phil.name}</strong>
+                            <button type="button" class="btn-card-action" style="padding: 0.2rem 0.5rem; font-size: 0.75rem;" onclick="app.searchByPhilosopher('${phil.name}')">
+                              <span>الدروس</span> →
+                            </button>
+                          </div>
+                          <p style="font-size: 0.85rem; color: var(--text-secondary); margin: 0; line-height: 1.5;">
+                            ${phil.stance}
+                          </p>
+                        </div>
+                      `).join("")}
+                    </div>
+                  </div>
+                `).join("")}
+              </div>
+            </div>
+          `).join("")}
+        </div>
+      </div>
+    `;
+  }
 }
+
 
 window.app = new AppManager();
 

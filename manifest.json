@@ -1,16 +1,26 @@
 {
   "name": "فضاء الحكمة والمعرفة | Espace Sagesse et Savoir",
   "short_name": "فضاء الحكمة",
-  "description": "المنصة التربوية الرقمية الأولى لمادة الفلسفة بالثانوي التأهيلي بالمغرب",
+  "description": "المنصة التربوية الرقمية الأولى لمادة الفلسفة بالثانوي التأهيلي بالمغرب - دروس، امتحانات، منهجيات، واختبارات تفاعلية",
   "start_url": "./index.html",
+  "scope": "./",
   "display": "standalone",
-  "orientation": "portrait-primary",
+  "orientation": "any",
   "background_color": "#0b0f19",
   "theme_color": "#0b0f19",
+  "dir": "rtl",
+  "lang": "ar",
+  "categories": ["education", "books", "reference"],
   "icons": [
     {
-      "src": "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><circle cx='50' cy='50' r='48' fill='%237c3aed'/><polygon points='50,15 62,38 88,40 68,58 74,84 50,70 26,84 32,58 12,40 38,38' fill='%23f59e0b'/><circle cx='50' cy='50' r='14' fill='%230b0f19'/></svg>",
-      "sizes": "192x192 512x512",
+      "src": "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 192 192'><rect width='192' height='192' rx='38' fill='%230b0f19'/><circle cx='96' cy='96' r='72' fill='%231e293b' stroke='%23f59e0b' stroke-width='4'/><path d='M96 46C76 34 52 38 42 46V130C52 122 76 118 96 130C116 118 140 122 150 130V46C140 38 116 34 96 46Z' fill='%23f59e0b'/><line x1='96' y1='46' x2='96' y2='130' stroke='%230b0f19' stroke-width='3'/><circle cx='96' cy='148' r='6' fill='%23f59e0b'/></svg>",
+      "sizes": "192x192",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'><rect width='512' height='512' rx='96' fill='%230b0f19'/><circle cx='256' cy='256' r='200' fill='%231e293b' stroke='%23f59e0b' stroke-width='10'/><path d='M256 120C202 88 138 98 112 120V348C138 326 202 316 256 348C310 316 374 326 400 348V120C374 98 310 88 256 120Z' fill='%23f59e0b'/><line x1='256' y1='120' x2='256' y2='348' stroke='%230b0f19' stroke-width='8'/><circle cx='256' cy='398' r='16' fill='%23f59e0b'/></svg>",
+      "sizes": "512x512",
       "type": "image/svg+xml",
       "purpose": "any maskable"
     }

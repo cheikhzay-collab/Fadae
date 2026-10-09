@@ -675,6 +675,496 @@ const PHILO_DATA = {
     }
   ],
 
+  // --------------------------------------------------------------------------
+  // بنك الأسئلة والاختبارات التفاعلية (Interactive Quizzes - QCM الفلسفي)
+  // --------------------------------------------------------------------------
+  quizzes: [
+    {
+      id: "q-1",
+      moduleId: "mod-human-condition",
+      level: "2bac",
+      concept: "الشخص والهوية",
+      question_ar: "على ماذا يؤسس رينيه ديكارت هوية الشخص وثبات الأنا؟",
+      question_fr: "Sur quoi René Descartes fonde-t-il l'identité de la personne et la permanence du Moi ?",
+      options_ar: [
+        "على التفكير المجرد المستمر (الكوجيطو)",
+        "على الذاكرة والوعي الحسي المقترن بالأفعال",
+        "على إرادة الحياة والجسد المادي",
+        "على الطبع والسلوك الاجتماعي المكتسب"
+      ],
+      options_fr: [
+        "Sur la pensée pure et le Cogito",
+        "Sur la mémoire et la conscience sensorielle",
+        "Sur le vouloir-vivre et le corps matériel",
+        "Sur le comportement social acquis"
+      ],
+      correctIndex: 0,
+      explanation_ar: "يرى ديكارت في كتابه (التأملات الميتافيزيقية) أن الشخص جوهر مفكر (Res cogitans)، وأن التفكير هو الخاصية الوحيدة التي لا تنفصل عن الذات وتحدد هويتها وثباتها: «أنا أشك، إذن أنا أفكر، إذن أنا موجود».",
+      explanation_fr: "Descartes établit que la substance pensante (Cogito) est le fondement indubitable de l'identité personnelle : tant que je pense, je suis.",
+      philosopher: "رينيه ديكارت"
+    },
+    {
+      id: "q-2",
+      moduleId: "mod-human-condition",
+      level: "2bac",
+      concept: "الشخص والهوية",
+      question_ar: "ما هو العنصر الحاسم في تحديد هوية الشخص عند الفيلسوف الإنجليزي جون لوك؟",
+      question_fr: "Quel est l'élément déterminant de l'identité personnelle selon John Locke ?",
+      options_ar: [
+        "الجوهر الروحي المفارق",
+        "الوعي الحسي المصحوب بالذاكرة الممتدة في الماضي",
+        "تطابق الصورة الجسدية للمرء أمام المرآة",
+        "الإرادة العاقلة المتصلة بالأخلاق"
+      ],
+      options_fr: [
+        "La substance spirituelle transcendante",
+        "La conscience liée aux sens et la mémoire",
+        "La ressemblance corporelle dans le miroir",
+        "La volonté morale rationnelle"
+      ],
+      correctIndex: 1,
+      explanation_ar: "انتقد جون لوك التصور الديكارتي، معتبراً أن النفس صفحة بيضاء وأن الوعي المقترن بالإدراك الحسي والذاكرة التي تستحضر الأفعال الماضية هو ما يصنع وحدة الذات وهوية الشخص عبر الزمان.",
+      explanation_fr: "Locke soutient que l'identité personnelle réside dans la continuité de la conscience accompagnée par la mémoire empirique.",
+      philosopher: "جون لوك"
+    },
+    {
+      id: "q-3",
+      moduleId: "mod-human-condition",
+      level: "2bac",
+      concept: "الشخص بوصفه قيمة",
+      question_ar: "لماذا يمتلك الشخص (قيمة مطلقة) وكرامة في نظر إيمانويل كانط؟",
+      question_fr: "Pourquoi la personne humaine possède-t-elle une valeur absolue (dignité) selon Emmanuel Kant ?",
+      options_ar: [
+        "لكونه كائناً عاقلاً أخلاقياً يُعد غاية في ذاته ولا يمكن تسعيره",
+        "بسبب مكانته الاجتماعية ووظيفته في الدولة",
+        "بفضل قوته البيولوجية وقدرته على السيطرة على الطبيعة",
+        "لأنه قادر على إنتاج الثروة والممتلكات"
+      ],
+      options_fr: [
+        "Parce qu'il est un être rationnel et moral, fin en soi",
+        "En raison de son statut social et de son utilité",
+        "Grâce à sa force biologique et son pouvoir",
+        "Parce qu'il produit de la richesse matérielle"
+      ],
+      correctIndex: 0,
+      explanation_ar: "يميز كانط بين (الأشياء) التي لها سعر نسبي ووسيلة، وبين (الأشخاص) الذين يتمتعون بكرامة وقيمة مطلقة لكونهم كائنات عاقلة تخضع للقانون الأخلاقي الواجب احترامه كغاية في ذاته.",
+      explanation_fr: "Pour Kant, les choses ont un prix (relatif), tandis que la personne possède une dignité intrinsèque inestimable en tant que fin en soi.",
+      philosopher: "إيمانويل كانط"
+    },
+    {
+      id: "q-4",
+      moduleId: "mod-human-condition",
+      level: "2bac",
+      concept: "وجود الغير",
+      question_ar: "كيف وصف جان بول سارتر دور (الغير) في وعي الأنا بذاتها في تجربة (الخجل ونظرة الغير)؟",
+      question_fr: "Comment Jean-Paul Sartre qualifie-t-il le rôle d'Autrui dans la prise de conscience de soi (le regard) ?",
+      options_ar: [
+        "الغير وسيط ضروري بيني وبين ذاتي، لكنه في الوقت ذاته يُشيّئ حريتي",
+        "الغير مجرد وهم بصري لا يؤثر في استقلالية الذات",
+        "الغير مصدر للمحبة الخالصة والتوافق الفطري التام دائماً",
+        "الغير كائن متطابق معي تماماً في الفكر والإرادة"
+      ],
+      options_fr: [
+        "Médiateur indispensable qui m'objective par son regard",
+        "Une illusion sensorielle sans effet sur le Moi",
+        "Une source d'harmonie et d'amour inconditionnel",
+        "Un être strictement identique à ma conscience"
+      ],
+      correctIndex: 0,
+      explanation_ar: "يعتبر سارتر في (الوجود والعدم) أن نظرة الغير تضعني أمام حقيقتي الموضوعية (أنا خجل مما يراني عليه الغير)، فالغير وسيط لا غنى عنه لمعرفة ذاتي، لكنه يجمد حريتي ويحولني إلى موضوع.",
+      explanation_fr: "Sartre explique : « Autrui est le médiateur indispensable entre moi et moi-même », son regard fige ma liberté et m'objective.",
+      philosopher: "جان بول سارتر"
+    },
+    {
+      id: "q-5",
+      moduleId: "mod-knowledge",
+      level: "2bac",
+      concept: "النظرية والتجربة",
+      question_ar: "ما هي الخطوات الأربع المنهجية التي حددها كلود برنار للمنهج التجريبي الصارم في العلوم الحية؟",
+      question_fr: "Quelles sont les étapes de la démarche expérimentale selon Claude Bernard ?",
+      options_ar: [
+        "الملاحظة، صياغة الفرضية، إنجاز التجربة، استنباط القانون العلمي",
+        "الشك المنهجي، الحدس الرياضي، التحليل، والتركيب",
+        "التأمل الميتافيزيقي، الاستدلال المنطقي، الإقناع البلاغي",
+        "جمع الآراء الشائعة، التصويت عليها، تطبيقها عملياً"
+      ],
+      options_fr: [
+        "Observation, Hypothèse, Expérimentation, Loi scientifique",
+        "Doute méthodique, Intuition, Déduction, Synthèse",
+        "Méditation métaphysique et rhétorique",
+        "Recueil d'opinions et consensus populaire"
+      ],
+      correctIndex: 0,
+      explanation_ar: "في كتاب (المدخل لدراسة الطب التجريبي)، وضع كلود برنار الأركان الأربعة: الملاحظة الموضوعية للواقعة، ابتكار فكرة أو فرضية تفسيرية، إخضاعها للتجريب المعملي للتحقق منها، والوصول إلى قانون علمي محدد.",
+      explanation_fr: "Claude Bernard formalise la démarche O.H.E.R.I.C : Observation -> Hypothèse -> Expérience -> Interprétation -> Loi.",
+      philosopher: "كلود برنار"
+    },
+    {
+      id: "q-6",
+      moduleId: "mod-knowledge",
+      level: "2bac",
+      concept: "العقلانية العلمية",
+      question_ar: "ما هو الأصل الحقيقي للمبادئ والمفاهيم الفيزيائية المعاصرة حسب ألبرت أينشتاين؟",
+      question_fr: "Quelle est la véritable source des concepts scientifiques modernes selon Albert Einstein ?",
+      options_ar: [
+        "الإنشاءات الحرة للعقل البشري والنسق الرياضي البديهي",
+        "التراكم العشوائي للمشاهدات الحسية المباشرة فقط",
+        "الأساطير والتقاليد الشعبية الموروثة",
+        "القوانين التي تفرضها السلطة السياسية على الباحثين"
+      ],
+      options_fr: [
+        "Les créations libres de l'esprit humain et le formalisme mathématique",
+        "La simple accumulation passive de données sensorielles",
+        "Les mythes et traditions transmises",
+        "Les normes dictées par le pouvoir politique"
+      ],
+      correctIndex: 0,
+      explanation_ar: "يؤكد أينشتاين أن النسق النظري للفيزياء الحديثة يتكون من مفاهيم وقوانين هي (إبداعات حرة للعقل البشري)، وأن الرياضيات هي التي تقدم المبدأ الخلاق، بينما تبقى التجربة وسيلة للتوجيه والاختبار فقط.",
+      explanation_fr: "Einstein affirme que la théorie est une construction déductive libre de la raison mathématique, l'expérience ne servant qu'à guider le choix.",
+      philosopher: "ألبرت أينشتاين"
+    },
+    {
+      id: "q-7",
+      moduleId: "mod-knowledge",
+      level: "2bac",
+      concept: "معايير علمية النظريات",
+      question_ar: "ما هو المعيار الإبستيمولوجي الشهير الذي وضعه كارل بوبر لتمييز النظريات العلمية عن النظريات الزائفة؟",
+      question_fr: "Quel est le critère épistémologique fondamental proposé par Karl Popper ?",
+      options_ar: [
+        "معيار القابلية للتكذيب أو التفنيد (Falsifiabilité)",
+        "معيار المطابقة التامة مع رغبات الجمهور",
+        "معيار الثبات الأبدي وعدم التغير",
+        "معيار الإجماع الديني والأخلاقي حول النظرية"
+      ],
+      options_fr: [
+        "Le critère de réfutabilité / falsifiabilité",
+        "La conformité avec les désirs de la majorité",
+        "L'inviolabilité absolue et l'immuabilité",
+        "Le consensus religieux ou moral"
+      ],
+      correctIndex: 0,
+      explanation_ar: "اعتبر كارل بوبر أن النظرية لا تكون علمية إلا إذا كانت تقبل أن تُختبر وأن تُكذّب بالتجربة (Falsifiability)؛ فالنظرية التي تدعي تفسير كل شيء ولا تقبل الدحض هي نظرية دغمائية لا علمية.",
+      explanation_fr: "Popper pose la réfutabilité comme ligne de démarcation : une proposition n'est scientifique que si elle est susceptible d'être réfutée par un fait empirique.",
+      philosopher: "كارل بوبر"
+    },
+    {
+      id: "q-8",
+      moduleId: "mod-politics",
+      level: "2bac",
+      concept: "مشروعية الدولة وغاياتها",
+      question_ar: "ما هي الغاية الأسمى من تأسيس الدولة والمجتمع المدني في فلسفة باروخ سبينوزا؟",
+      question_fr: "Quelle est la fin suprême de l'institution étatique selon Baruch Spinoza ?",
+      options_ar: [
+        "الحرية وتمكين الأفراد من تنمية عقولهم وأجسادهم في أمان",
+        "إرهاب المواطنين وإخضاعهم بالقوة المطلقة لحاكم مستبد",
+        "شن الحروب المستمرة على الدول المجاورة للتوسع",
+        "فرض معتقد ديني واحد بالقوة الجبرية"
+      ],
+      options_fr: [
+        "La liberté et l'émancipation rationnelle des citoyens",
+        "La terreur et la domination absolue",
+        "L'expansionnisme militaire continu",
+        "L'imposition coercitive d'un culte unique"
+      ],
+      correctIndex: 0,
+      explanation_ar: "يصرح سبينوزا في (رسالة في اللاهوت والسياسة): «إن الغاية الحقيقية من تأسيس الدولة هي في الواقع الحرية»، وليس تحويل الكائنات العاقلة إلى بهائم أو آلات مسلوبة الإرادة.",
+      explanation_fr: "Spinoza démontre que la véritable fin de l'État n'est pas la domination par la peur, mais la libération de l'homme afin qu'il use de sa raison.",
+      philosopher: "باروخ سبينوزا"
+    },
+    {
+      id: "q-9",
+      moduleId: "mod-politics",
+      level: "2bac",
+      concept: "طبيعة السلطة السياسية",
+      question_ar: "ماذا نصح نيقولا ماكيافيلي الأمير في تدبير شؤون الحكم والصراع السياسي؟",
+      question_fr: "Quel conseil Nicolas Machiavel prodigue-t-il au Prince pour gouverner efficacement ?",
+      options_ar: [
+        "أن يجمع بين طباع الأسد (لترهيب الذئاب) وطباع الثعلب (لكشف الفخاخ)",
+        "أن يلتزم بالمثالية الأخلاقية حتى لو خسر ملكه",
+        "أن يتنازل عن جميع صلاحياته للمواطنين بالتساوي",
+        "أن يعتزل السياسة ويفوضها للحكماء فقط"
+      ],
+      options_fr: [
+        "Être à la fois lion (pour effrayer) et renard (pour ruser)",
+        "Maintenir une vertu naïve même au prix de sa chute",
+        "Renoncer à tout pouvoir autoritaire",
+        "Déléguer la gouvernance aux ermites"
+      ],
+      correctIndex: 0,
+      explanation_ar: "في كتاب (الأمير)، أسس ماكيافيلي للواقعية السياسية: يجب على الحاكم أن يكون حذراً ومراوغاً كالثعلب حتى لا يقع في الشباك، وقوياً كالأسد ليرهب الأعداء، فالغاية عنده تبرر استخدام الوسائل المتاحة.",
+      explanation_fr: "Machiavel formule le réalisme politique : « Il faut être renard pour connaître les pièges, et lion pour effrayer les loups ».",
+      philosopher: "نيقولا ماكيافيلي"
+    },
+    {
+      id: "q-10",
+      moduleId: "mod-politics",
+      level: "2bac",
+      concept: "العدالة بين المساواة والإنصاف",
+      question_ar: "لماذا اعتبر أرسطو أن (الإنصاف) أسمى وأفضل من (العدالة الحرفية للقانون)؟",
+      question_fr: "Pourquoi Aristote considère-t-il l'équité comme supérieure à la stricte justice légale ?",
+      options_ar: [
+        "لأن القوانين تصاغ بصفة عامة، والإنصاف يصحح جمود القانون عند تطبيقه على الحالات الخاصة",
+        "لأن الإنصاف يلغي جميع القوانين ويشيع الفوضى",
+        "لأن القضاة معصومون من الخطأ ولا يحتاجون لقوانين",
+        "لأن العدالة القانونية تضر دائماً بالطبقة الحاكمة"
+      ],
+      options_fr: [
+        "Parce que la loi est générale et l'équité rectifie les cas particuliers",
+        "Parce que l'équité supprime toute règle formelle",
+        "Parce que les juges n'ont plus besoin de textes écrits",
+        "Parce que la stricte légalité sert toujours la tyrannie"
+      ],
+      correctIndex: 0,
+      explanation_ar: "يوضح أرسطو في (أخلاق نيقوماخوس) أن عمومية القوانين المكتوبة تجعلها قاصرة أمام خصوصية كل نازلة، والإنصاف هو تصحيح حكيم للقانون لتجاوز ظلمه الناجم عن صرامته الحرفية.",
+      explanation_fr: "Aristote enseigne que l'équitable est un correctif de la justice légale là où celle-ci se révèle déficiente en raison de son universalité.",
+      philosopher: "أرسطو"
+    },
+    {
+      id: "q-11",
+      moduleId: "mod-ethics",
+      level: "2bac",
+      concept: "الواجب والإكراه",
+      question_ar: "ما هو الفرق عند إيمانويل كانط بين (الأمر الشرطي) و(الأمر القطعي المطلق) في الواجب الأخلاقي؟",
+      question_fr: "Quelle est la différence fondamentale chez Kant entre impératif hypothétique et impératif catégorique ?",
+      options_ar: [
+        "الأمر الشرطي مشروط بتحقيق مصلحة أو منفعة، بينما القطعي واجب في ذاته دون قيد أو شرط",
+        "الأمر الشرطي خاص برجال الدين والقطعي خاص بالملوك",
+        "الأمر الشرطي ثابت أبدي والقطعي نسبي يتغير يومياً",
+        "كلاهما يقومان على المصلحة الشخصية واللذة المادية فقط"
+      ],
+      options_fr: [
+        "L'hypothétique vise un intérêt empirique, le catégorique commande inconditionnellement",
+        "L'hypothétique est théologique et le catégorique est profane",
+        "L'hypothétique est universel et le catégorique est subjectif",
+        "Les deux reposent exclusivement sur la recherche du plaisir"
+      ],
+      correctIndex: 0,
+      explanation_ar: "يؤكد كانط أن الفعل الأخلاقي الحق ينبع من (أمر قطعي - Catégorique) نابع من العقل العملي لذاته (افعل الواجب لأنه واجب)، أما الأوامر المشروطة بمنفعة أو سمعة فلا ترقى إلى مرتبة الأخلاقية الخالصة.",
+      explanation_fr: "L'impératif catégorique commande l'action pour elle-même, sans viser aucune fin extérieure ni utilité sensible.",
+      philosopher: "إيمانويل كانط"
+    },
+    {
+      id: "q-12",
+      moduleId: "mod-ethics",
+      level: "2bac",
+      concept: "الحرية والحتمية",
+      question_ar: "ما هو الموقف الجذري لـ جان بول سارتر من مسألة الحرية الإنسانية في الفلسفة الوجودية؟",
+      question_fr: "Quelle est la thèse radicale de Jean-Paul Sartre concernant la liberté dans l'existentialisme ?",
+      options_ar: [
+        "الإنسان محكوم عليه بأن يكون حراً، والوجود يسبق الماهية وهو المسؤول الوحيد عن اختياراته",
+        "الإنسان خاضع بالكامل للحتميات البيولوجية والوراثية دون أي إرادة",
+        "الحرية مقصورة على طبقة معينة من الفلاسفة والمفكرين فقط",
+        "الحرية شعور وهمي خادع لا وجود له في الواقع الموضوعي"
+      ],
+      options_fr: [
+        "L'homme est condamné à être libre, l'existence précède l'essence",
+        "L'homme est totalement déterminé par la génétique",
+        "La liberté est un privilège d'aristocrates",
+        "La liberté n'est qu'une illusion d'optique cérébrale"
+      ],
+      correctIndex: 0,
+      explanation_ar: "يؤكد سارتر أن «الوجود يسبق الماهية»، فالإنسان يوجد أولاً في العالم ثم يصنع نفسه باختياراته الحرة، ولا عذر له في التنصل من مسؤوليته الكاملة عن مصيره وعن الإنسانية جمعاء.",
+      explanation_fr: "Sartre déclare que « l'homme est condamné à être libre » car créé sans notice, il invente sa propre essence par chacun de ses actes.",
+      philosopher: "جان بول سارتر"
+    }
+  ],
+
+  // --------------------------------------------------------------------------
+  // الخرائط المفاهيمية البصرية التفاعلية للمقرر المغربي (Mind Maps)
+  // --------------------------------------------------------------------------
+  mindmaps: [
+    {
+      id: "map-human-condition",
+      moduleId: "mod-human-condition",
+      title_ar: "خريطة مجزوءة الوضع البشري",
+      title_fr: "Carte Conceptuelle : La Condition Humaine",
+      badge_ar: "الذاتية • التفاعلية • التاريخ",
+      concepts: [
+        {
+          name_ar: "1. مفهوم الشخص (La Personne)",
+          axes: [
+            {
+              problem_ar: "الإشكال الأول: هوية الشخص وثبات الأنا عبر الزمن",
+              philosophers: [
+                { name: "رينيه ديكارت", stance: "تأسيس الهوية على جوهر الفكر المجرد (الكوجيطو)." },
+                { name: "جون لوك", stance: "تأسيس الهوية على الوعي الحسي المقترن بامتداد الذاكرة." },
+                { name: "أرثر شوبنهاور", stance: "هوية الشخص ترتكز على نواة عميقة لا تتغير هي إرادة الحياة." }
+              ]
+            },
+            {
+              problem_ar: "الإشكال الثاني: الشخص بوصفه قيمة (أخلاقية وحقوقية)",
+              philosophers: [
+                { name: "إيمانويل كانط", stance: "الشخص غاية في ذاته وله كرامة مطلقة تميزه عن سائر الموجودات." },
+                { name: "جورج غوسدورف", stance: "قيمة الشخص لا تتحقق في العزلة، بل بالمشاركة والانفتاح التضامني." }
+              ]
+            },
+            {
+              problem_ar: "الإشكال الثالث: الشخص بين الضرورة والحرية",
+              philosophers: [
+                { name: "باروخ سبينوزا", stance: "القول بالحرية ناتج عن وعي الرغبات والجهل بالعلل والحتميات المحددة لها." },
+                { name: "جان بول سارتر", stance: "الإنسان مشروع حر يتجاوز كل إشراط موضوعي بصنع ماهيته واختياراته." }
+              ]
+            }
+          ]
+        },
+        {
+          name_ar: "2. مفهوم الغير (Autrui)",
+          axes: [
+            {
+              problem_ar: "الإشكال الأول: وجود الغير (بين الضرورة والتطاول)",
+              philosophers: [
+                { name: "رينيه ديكارت", stance: "الشك في وجود الآخرين وافتراضه بالاستدلال العقلي والمماثلة." },
+                { name: "جان بول سارتر", stance: "الغير وسيط ضروري بيني وبين ذاتي، لكنه في الوقت ذاته جحيم يشيّئني بنظرته." }
+              ]
+            },
+            {
+              problem_ar: "الإشكال الثاني: معرفة الغير (ممكنة أم مستحيلة؟)",
+              philosophers: [
+                { name: "نيكولا مالبرانش", stance: "معرفة الغير بالتمثيل والتخمين تقريبية لا ترقى إلى اليقين." },
+                { name: "موريس ميرلوبونتي", stance: "معرفة الغير ممكنة عبر التواصل الجسدي والتعاطف اللغوي المتبادل." }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      id: "map-knowledge",
+      moduleId: "mod-knowledge",
+      title_ar: "خريطة مجزوءة المعرفة",
+      title_fr: "Carte Conceptuelle : La Connaissance",
+      badge_ar: "الإبستيمولوجيا • الحقيقة • المنهج",
+      concepts: [
+        {
+          name_ar: "1. النظرية والتجربة (Théorie et Expérience)",
+          axes: [
+            {
+              problem_ar: "الإشكال الأول: التجربة والتجريب في العلم",
+              philosophers: [
+                { name: "كلود برنار", stance: "التجريب العلمي هو المعيار الأوحد لاختبار الفرضيات (المنهج التجريبي)." },
+                { name: "رينيه طوم", stance: "التجريب الأعمى عقيم، والخيال النظري والرياضي شرط لتفسير الظواهر." }
+              ]
+            },
+            {
+              problem_ar: "الإشكال الثاني: العقلانية العلمية وبناء المعرفة",
+              philosophers: [
+                { name: "ألبرت أينشتاين", stance: "المفاهيم العلمية إبداعات حرة للعقل الرياضي الخلاق." },
+                { name: "غاستون باشلار", stance: "العقلانية المطبقة: حوار جدلي دائم ومتبادل بين العقل والتجربة." }
+              ]
+            },
+            {
+              problem_ar: "الإشكال الثالث: معايير علمية النظريات",
+              philosophers: [
+                { name: "كارل بوبر", stance: "قابلية النظرية للتفنيد والتكذيب هي معيار علميتها." },
+                { name: "بيير دوهيم", stance: "معيار الصدق هو تماسك النسق النظري ومطابقته للتجربة الفيزيائية." }
+              ]
+            }
+          ]
+        },
+        {
+          name_ar: "2. مفهوم الحقيقة (La Vérité)",
+          axes: [
+            {
+              problem_ar: "الإشكال الأول: معايير الحقيقة",
+              philosophers: [
+                { name: "رينيه ديكارت", stance: "معيار البداهة والوضوح والتماسك العقلي الميتافيزيقي." },
+                { name: "ويليام جيمس", stance: "المعيار البراغماتي: الحقيقة هي الفكرة القابلة للتطبيق والمفيدة عملياً." }
+              ]
+            },
+            {
+              problem_ar: "الإشكال الثاني: قيمة الحقيقة والرهان عليها",
+              philosophers: [
+                { name: "إيمانويل كانط", stance: "الحقيقة واجب أخلاقي مطلق غير مشروط لا يجوز نقضه بالكذب مطلقاً." },
+                { name: "فريدريك نيتشه", stance: "الحقيقة وهم استعاري تم نسيان طابعه المجازي لتسهيل العيش." }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      id: "map-politics",
+      moduleId: "mod-politics",
+      title_ar: "خريطة مجزوءة السياسة",
+      title_fr: "Carte Conceptuelle : La Politique",
+      badge_ar: "السلطة • القانون • العدالة",
+      concepts: [
+        {
+          name_ar: "1. مفهوم الدولة (L'État)",
+          axes: [
+            {
+              problem_ar: "الإشكال الأول: مشروعية الدولة وغاياتها",
+              philosophers: [
+                { name: "طوماس هوبز", stance: "حماية أرواح الناس من الفوضى والتوحش في حالة الطبيعة (التنازل الكلي للحاكم)." },
+                { name: "جون لوك", stance: "صيانة الحقوق الطبيعية للإنسان: الملكية، الحرية، والأمان." },
+                { name: "باروخ سبينوزا", stance: "الغاية الحقيقية من تأسيس الدولة هي الحرية وتنمية العقول." }
+              ]
+            },
+            {
+              problem_ar: "الإشكال الثاني: طبيعة السلطة السياسية",
+              philosophers: [
+                { name: "نيقولا ماكيافيلي", stance: "الواقعية السياسية: الجمع بين القوة (الأسد) والمكر والحيلة (الثعلب)." },
+                { name: "مونتيسكيو", stance: "فصل السلط (التشريعية، التنفيذية، القضائية) لمنع الاستبداد." }
+              ]
+            }
+          ]
+        },
+        {
+          name_ar: "2. الحق والعدالة (Le Droit et la Justice)",
+          axes: [
+            {
+              problem_ar: "الإشكال الأول: الحق الطبيعي والحق الوضعي",
+              philosophers: [
+                { name: "طوماس هوبز", stance: "الحق الطبيعي هو حق القوة والحرية المطلقة لاستخدام كل الوسائل للبقاء." },
+                { name: "جون جاك روسو", stance: "الانتقال إلى الحق الوضعي التعاقدي المبني على الإرادة العامة والسيادة." }
+              ]
+            },
+            {
+              problem_ar: "الإشكال الثاني: العدالة بين المساواة والإنصاف",
+              philosophers: [
+                { name: "أرسطو", stance: "الإنصاف يصحح جمود القوانين العامة عند تطبيقها على الوقائع المتفردة." },
+                { name: "جون رولز", stance: "العدالة كإنصاف: تكافؤ الفرص وحماية الفئات الأقل حظاً في المجتمع." }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      id: "map-ethics",
+      moduleId: "mod-ethics",
+      title_ar: "خريطة مجزوءة الأخلاق",
+      title_fr: "Carte Conceptuelle : La Morale",
+      badge_ar: "الواجب • الحرية • المسؤولية",
+      concepts: [
+        {
+          name_ar: "1. مفهوم الواجب (Le Devoir)",
+          axes: [
+            {
+              problem_ar: "الإشكال الأول: الواجب بين الإكراه والالتزام الحر",
+              philosophers: [
+                { name: "إيمانويل كانط", stance: "الواجب التزام عقلي نابع من الإرادة الحرة الطيبة والخضوع للقانون الأخلاقي." },
+                { name: "إميل دوركهايم", stance: "الواجب إكراه اجتماعي مفروض من الضمير الجمعي والمؤسسات." }
+              ]
+            }
+          ]
+        },
+        {
+          name_ar: "2. مفهوم الحرية (La Liberté)",
+          axes: [
+            {
+              problem_ar: "الإشكال الأول: الحرية والحتمية",
+              philosophers: [
+                { name: "باروخ سبينوزا", stance: "الحرية وهم؛ الإنسان خاضع لحتميات كونية وطبيعية شاملة." },
+                { name: "جان بول سارتر", stance: "الحرية مطلقة ولا حدود لها سوى رفض الحرية ذاتها (مسؤولية الوجود)." }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ],
+
   // إحصائيات لوحة الإدارة الأولية
   adminStats: {
     totalTeachers: 1845,

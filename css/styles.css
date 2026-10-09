@@ -3830,3 +3830,123 @@ html[dir="ltr"] .btn-login-submit:hover .btn-arrow {
     border: none !important;
   }
 }
+
+/* ==========================================================================
+   المحور 4: شريط وضع عدم الاتصال وتثبيت التطبيق (PWA & Offline Banner)
+   ========================================================================== */
+.offline-banner {
+  background: linear-gradient(90deg, #b45309, #d97706, #f59e0b);
+  color: #0b0f19;
+  font-weight: 800;
+  font-size: 0.9rem;
+  padding: 0.65rem 1rem;
+  text-align: center;
+  position: sticky;
+  top: 0;
+  z-index: 2500;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+  animation: toast-in 0.3s ease;
+}
+
+.offline-banner-inner {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.6rem;
+}
+
+#btnPwaInstall {
+  animation: pulse-ring 2.5s infinite;
+  transition: all var(--transition-fast);
+}
+
+@keyframes pulse-ring {
+  0% { box-shadow: 0 0 0 0 rgba(245, 158, 11, 0.4); }
+  70% { box-shadow: 0 0 0 10px rgba(245, 158, 11, 0); }
+  100% { box-shadow: 0 0 0 0 rgba(245, 158, 11, 0); }
+}
+
+#btnPwaInstall:hover {
+  background: rgba(245, 158, 11, 0.3) !important;
+  transform: translateY(-2px);
+}
+
+/* ==========================================================================
+   المحور 2: تنسيقات بنك الاختبارات التفاعلية (Interactive QCM Quizzes)
+   ========================================================================== */
+.quiz-modules-filter,
+.mindmap-tabs-nav {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 0.65rem;
+  flex-wrap: wrap;
+  margin-bottom: 2.2rem;
+}
+
+.quiz-card {
+  position: relative;
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.quiz-option-btn {
+  text-align: start;
+  user-select: none;
+}
+
+.quiz-option-btn:hover:not(:disabled) {
+  border-color: var(--accent-gold) !important;
+  background: rgba(245, 158, 11, 0.08) !important;
+  transform: translateX(-4px);
+}
+
+html[dir="ltr"] .quiz-option-btn:hover:not(:disabled) {
+  transform: translateX(4px);
+}
+
+.quiz-option-btn.correct {
+  border-color: #10b981 !important;
+  background: rgba(16, 185, 129, 0.12) !important;
+  box-shadow: 0 0 15px rgba(16, 185, 129, 0.2);
+}
+
+.quiz-option-btn.wrong {
+  border-color: #ef4444 !important;
+  background: rgba(239, 68, 68, 0.12) !important;
+  box-shadow: 0 0 15px rgba(239, 68, 68, 0.2);
+}
+
+/* ==========================================================================
+   المحور 2: الخرائط المفاهيمية البصرية التفاعلية (Mind Maps)
+   ========================================================================== */
+.mindmap-concept-node {
+  box-shadow: 0 4px 18px rgba(0, 0, 0, 0.2);
+}
+
+.mindmap-concept-node:hover {
+  transform: translateY(-4px);
+  border-color: rgba(245, 158, 11, 0.4);
+}
+
+.mindmap-axis-box {
+  transition: background 0.2s ease;
+}
+
+.mindmap-axis-box:hover {
+  background: rgba(255, 255, 255, 0.06);
+}
+
+@media (max-width: 640px) {
+  .quiz-card {
+    padding: 1.2rem !important;
+  }
+  .mindmap-canvas {
+    padding: 1.2rem !important;
+  }
+  .quiz-modules-filter .filter-pill,
+  .mindmap-tabs-nav .filter-pill {
+    font-size: 0.85rem;
+    padding: 0.45rem 0.85rem;
+  }
+}
+
